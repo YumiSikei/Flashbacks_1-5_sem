@@ -1,0 +1,273 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/18/18 06:54:08
+                                                             Page     1-1
+
+
+ 0000				     SSTACK     SEGMENT PARA STACK  'STACK'
+ 0000  0040[			                DB   64 DUP('СТЕК____')
+	   D1 D2 C5 CA 5F	
+	   5F 5F 5F		
+			 ]	
+				
+ 0200				     SSTACK     ENDS
+				
+ 0000				     DSEG          SEGMENT  PARA PUBLIC 'DATA'
+ 0000  75 73 65 20 6B 69	     m         db 'use kind 0..8: '
+       6E 64 20 30 2E 2E	
+       38 3A 20			
+				               PUBLIC prob
+ 000F  0A 0D			     prob      db 10, 13
+ 0011  24			               db "$"
+ 0012  20 20 20 20 20 20	     str       db "                "
+       20 20 20 20 20 20	
+       20 20 20 20		
+ 0022  24			               db "$"
+ 0023  0000			     numb      dw ?
+ 0025				     DSEG          ENDS
+Microsoft (R) Macro Assembler Version 5.10                  4/18/18 06:54:08
+                                                             Page     1-2
+
+
+				PAGE
+ 0000				     CSEG      SEGMENT PARA PUBLIC 'CODE'
+				               ASSUME CS:CSEG,DS:DSEG,SS:SSTACK
+				
+				            
+				               public end_p
+				
+ 0000				p1 PROC NEAR
+				
+ 0000  BA 000F R		               mov dx, offset prob
+ 0003  B4 09			               mov ah, 9
+ 0005  CD 21			               int 21h 
+				
+				               ; ввод  строки
+ 0007  B4 0A			               mov ah, 0ah
+ 0009  C6 06 0012 R 08		               mov str, 8
+ 000E  C6 06 0013 R 00		               mov str[1], 0
+ 0013  BA 0012 R		               mov dx, offset str
+ 0016  CD 21			               int 21h
+				
+ 0018  A0 0013 R		               mov al, str[1]; длина введенной 
+				строки
+ 001B  83 C2 02			               add dx, 2 ; адрес введенной стро
+				ки
+				
+				               ; перевести в число
+ 001E  8B F2			               mov si, dx
+ 0020  80 3C 2D			               cmp byte ptr [si], '-'
+ 0023  74 2A			               je minus
+				               ;беззнаковое
+ 0025  BD 0001			               mov bp, 1
+				
+ 0028  8A C8			               mov cl, al; количество цифр
+ 002A  B5 00			cy2:           mov ch, 0
+ 002C  B8 0000			               mov ax, 0
+ 002F  B7 00			               mov bh, 0
+ 0031  BF 000A			               mov di, 10
+ 0034				cy1:          
+ 0034  F7 E7			               mul di
+				       
+ 0036  8A 1C			               mov bl, [si]; запишем очередной 
+				символ
+ 0038  80 EB 30			               sub bl, '0'; получаем число
+ 003B  03 C3			               add ax, bx
+ 003D  46			               inc si
+ 003E  E2 F4			               loop cy1
+				
+ 0040  F7 ED			               imul bp
+				
+ 0042  A3 0023 R		               mov numb, ax   
+				
+ 0045  BA 000F R		               mov dx, offset prob
+ 0048  B4 09			               mov ah, 9
+ 004A  CD 21			               int 21h 
+Microsoft (R) Macro Assembler Version 5.10                  4/18/18 06:54:08
+                                                             Page     1-3
+
+
+				
+ 004C  E9 00F6 R		               jmp e 
+ 004F				minus:         ;знаковое
+ 004F  BD FFFF			               mov bp, -1
+ 0052  8A C8			               mov cl, al; количество цифр
+ 0054  FE C9			               dec cl
+ 0056  46			               inc si
+ 0057  EB D1			               jmp cy2
+				
+ 0059  C3				       ret
+ 005A				p1 ENDP
+				 		
+ 005A				     START     PROC FAR              
+ 005A  B8 ---- R		cycle_b:       MOV  AX,DSEG ; получаем адресок 
+				секции datasec в ds
+ 005D  8E D8			               mov ds, ax
+ 005F  BA 0000 R		               mov dx, offset m; print string
+ 0062  B4 09			               mov ah, 9
+ 0064  CD 21			               int 21h
+				
+ 0066  B4 01			               mov ah, 1 ; считать 1 символ в a
+				l
+ 0068  CD 21			               int 21h
+				               
+ 006A  3C 30			               cmp al, '0'
+ 006C  74 20			               je m0
+ 006E  3C 31			               cmp al, '1'
+ 0070  74 7C			               je m1
+ 0072  3C 32			               cmp al, '2'
+ 0074  74 1E			               je m2
+ 0076  3C 33			               cmp al, '3'
+ 0078  74 28			               je m3
+ 007A  3C 34			               cmp al, '4'
+ 007C  74 32			               je  m4
+ 007E  3C 35			               cmp al, '5'
+ 0080  74 3C			               je m5
+ 0082  3C 36			               cmp al, '6'
+ 0084  74 46			               je m6
+ 0086  3C 37			               cmp al, '7'
+ 0088  74 50			               je m7
+ 008A  3C 38			               cmp al, '8'
+ 008C  74 5A			               je m8
+				              
+ 008E				m0:            EXTRN p0: PROC
+ 008E  BB 0000 E		               mov bx, offset p0
+ 0091  EB 61 90			               jmp cycle_e   
+				            
+ 0094				m2:            EXTRN p2: PROC
+ 0094  BB 0000 E		               mov bx, offset p2
+ 0097  B8 0012 R		               mov ax, offset str
+ 009A  50				       Push ax
+ 009B  FF 36 0023 R		               Push numb
+ 009F  EB 53 90			               jmp cycle_e 
+				
+Microsoft (R) Macro Assembler Version 5.10                  4/18/18 06:54:08
+                                                             Page     1-4
+
+
+ 00A2				m3:            EXTRN p3: PROC
+ 00A2  BB 0000 E		               mov bx, offset p3
+ 00A5  B8 0012 R		               mov ax, offset str
+ 00A8  50				       Push ax
+ 00A9  FF 36 0023 R		               Push numb
+ 00AD  EB 45 90			               jmp cycle_e 
+				
+ 00B0				m4:            EXTRN p4: PROC
+ 00B0  BB 0000 E		               mov bx, offset p4
+ 00B3  B8 0012 R		               mov ax, offset str
+ 00B6  50				       Push ax
+ 00B7  FF 36 0023 R		               Push numb
+ 00BB  EB 37 90			               jmp cycle_e 
+				
+ 00BE				m5:            EXTRN p5: PROC
+ 00BE  BB 0000 E		               mov bx, offset p5
+ 00C1  B8 0012 R		               mov ax, offset str
+ 00C4  50				       Push ax
+ 00C5  FF 36 0023 R		               Push numb
+ 00C9  EB 29 90			               jmp cycle_e 
+				
+ 00CC				m6:            EXTRN p6: PROC
+ 00CC  BB 0000 E		               mov bx, offset p6
+ 00CF  B8 0012 R		               mov ax, offset str
+ 00D2  50				       Push ax
+ 00D3  FF 36 0023 R		               Push numb
+ 00D7  EB 1B 90			               jmp cycle_e 
+				
+ 00DA				m7:            EXTRN p7: PROC
+ 00DA  BB 0000 E		               mov bx, offset p7
+ 00DD  B8 0012 R		               mov ax, offset str
+ 00E0  50				       Push ax
+ 00E1  FF 36 0023 R		               Push numb
+ 00E5  EB 0D 90			               jmp cycle_e 
+				
+ 00E8				m8:            EXTRN p8: PROC
+ 00E8  BB 0000 E		               mov bx, offset p8
+ 00EB  EB 07 90			               jmp cycle_e 
+				
+ 00EE				m1:            ;EXTRN p1: PROC
+ 00EE  BB 0000 R		               mov bx, offset p1
+				
+ 00F1  EB 01 90				       jmp cycle_e
+					       
+				
+ 00F4  FF D3			cycle_e:       call bx
+ 00F6  E9 005A R		e:             jmp cycle_b               
+					
+ 00F9				end_p label near
+ 00F9  B4 4C				       MOV  AH,4Ch;
+ 00FB  CD 21			               INT 21H; передача управления дос
+ 00FD				     START     ENDP
+				               
+ 00FD				     CSEG      ENDS
+Microsoft (R) Macro Assembler Version 5.10                  4/18/18 06:54:08
+                                                             Page     1-5
+
+
+				               END  START       
+Microsoft (R) Macro Assembler Version 5.10                  4/18/18 06:54:08
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	00FD	PARA	PUBLIC	'CODE'
+DSEG . . . . . . . . . . . . . .  	0025	PARA	PUBLIC	'DATA'
+SSTACK . . . . . . . . . . . . .  	0200	PARA	STACK	'STACK'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+CY1  . . . . . . . . . . . . . .  	L NEAR	0034	CSEG
+CY2  . . . . . . . . . . . . . .  	L NEAR	002A	CSEG
+CYCLE_B  . . . . . . . . . . . .  	L NEAR	005A	CSEG
+CYCLE_E  . . . . . . . . . . . .  	L NEAR	00F4	CSEG
+
+E  . . . . . . . . . . . . . . .  	L NEAR	00F6	CSEG
+END_P  . . . . . . . . . . . . .  	L NEAR	00F9	CSEG	Global
+
+M  . . . . . . . . . . . . . . .  	L BYTE	0000	DSEG
+M0 . . . . . . . . . . . . . . .  	L NEAR	008E	CSEG
+M1 . . . . . . . . . . . . . . .  	L NEAR	00EE	CSEG
+M2 . . . . . . . . . . . . . . .  	L NEAR	0094	CSEG
+M3 . . . . . . . . . . . . . . .  	L NEAR	00A2	CSEG
+M4 . . . . . . . . . . . . . . .  	L NEAR	00B0	CSEG
+M5 . . . . . . . . . . . . . . .  	L NEAR	00BE	CSEG
+M6 . . . . . . . . . . . . . . .  	L NEAR	00CC	CSEG
+M7 . . . . . . . . . . . . . . .  	L NEAR	00DA	CSEG
+M8 . . . . . . . . . . . . . . .  	L NEAR	00E8	CSEG
+MINUS  . . . . . . . . . . . . .  	L NEAR	004F	CSEG
+
+NUMB . . . . . . . . . . . . . .  	L WORD	0023	DSEG
+
+P0 . . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+P1 . . . . . . . . . . . . . . .  	N PROC	0000	CSEG	Length = 005A
+P2 . . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+P3 . . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+P4 . . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+P5 . . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+P6 . . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+P7 . . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+P8 . . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+PROB . . . . . . . . . . . . . .  	L BYTE	000F	DSEG	Global
+
+START  . . . . . . . . . . . . .  	F PROC	005A	CSEG	Length = 00A3
+STR  . . . . . . . . . . . . . .  	L BYTE	0012	DSEG
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  main		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+Microsoft (R) Macro Assembler Version 5.10                  4/18/18 06:54:08
+                                                             Symbols-2
+
+
+
+    171 Source  Lines
+    171 Total   Lines
+     45 Symbols
+
+  46512 + 401740 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

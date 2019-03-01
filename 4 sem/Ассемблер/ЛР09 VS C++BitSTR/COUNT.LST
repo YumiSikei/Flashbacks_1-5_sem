@@ -1,0 +1,79 @@
+Turbo Assembler	 Version 5.3	    05-23-18 12:14:39	    Page 1
+COUNT.ASM
+
+
+
+      1					 ;2.  Составить подпрограмму с именем Count	типа
+      2					 ;	function (const	S: LONGWORD; L:LONGWORD)
+      3					 ;возвращающую число единиц битовой строки S длины +
+      4					 L.
+      5
+      6					 .386
+      7	00000000			 .model	FLAT,C ; Теперь С вместо паскаля
+      8					 PUBLIC	COUNT
+      9
+     10	00000000			 .CODE
+     11	00000000			 COUNT PROC
+     12
+     13					 ;Пролог(неполный)
+     14	00000000  55			   push	ebp
+     15	00000001  8B EC			   mov ebp,esp
+     16
+     17					   ; тут теперь сначала	+8, потом +12.(У них это		    +
+     18					 неисправлено)
+     19		  = dword ptr[ebp+8]	   S equ dword ptr[ebp+8] ; наша строка
+     20		  = dword ptr[ebp+12]	   L equ dword ptr[ebp+12] ; длина	строки
+     21
+     22	00000003  B8 00000000		   mov eax,0
+     23	00000008  8B 5D	08		   mov ebx,S
+     24	0000000B  8B 4D	0C		   mov ecx,L
+     25	0000000E  BA 00000000		   mov edx,0
+     26
+     27					 ; Цикл
+     28	00000013			 M:
+     29	00000013  0F A3	13		   bt [ebx], edx
+     30	00000016  83 D0	00		   adc eax, 0
+     31	00000019  42			   inc edx ; смещение растёт
+     32	0000001A  E2 F7			   loop	M
+     33
+     34	0000001C  5D			   pop ebp   ; по поглашению должны защитить регистры
+1    35	0000001D  C3				 RET	 00000h
+     36	0000001E			 COUNT ENDP; У	них эта строчка почему то убрана. Но не	    +
+     37					 надо так.
+     38					 END
+Turbo Assembler	 Version 5.3	    05-23-18 12:14:39	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "05-23-18"
+??FILENAME			  Text	 "COUNT	  "
+??TIME				  Text	 "12:14:39"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 COUNT
+@INTERFACE			  Text	 001H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+COUNT (_COUNT)			  Near32 FLAT:0000
+L				  Text	 dword ptr[ebp+12]
+M				  Near32 FLAT:0013
+S				  Text	 dword ptr[ebp+8]
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0000 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  001E Dword  Public  CODE
+

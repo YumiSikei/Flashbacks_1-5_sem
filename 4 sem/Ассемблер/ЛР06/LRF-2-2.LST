@@ -1,0 +1,62 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 13:01:00
+
+                                                             Page     1-1
+
+
+       1				PUBLIC factorial
+       2				
+       3 0000				CSEG SEGMENT PARA PUBLIC 'CODE'
+       4					assume CS:CSEG
+       5 0000				factorial proc near
+       6 0000					factorial1:
+       7 0000  55					push bp                
+       8 0001  8B EC					mov bp,sp              
+					 
+       9 0003  8B 46 04					mov ax,[bp+4]     
+      10 0006  3D 0001					cmp ax, 1              
+      11 0009  74 0B					je f_ret         
+      12 000B  48					dec ax                 
+					 
+      13 000C  50					push ax                
+      14 000D  E8 0000 R				call factorial      
+      15 0010  F7 66 04					mul word ptr[bp+4]
+						 
+      16 0013  83 C4 02					add sp, 2 
+      17 0016					f_ret:
+      18 0016  5D					pop bp                
+      19 0017  C3					ret           
+      20 0018				factorial endp
+      21 0018				CSEG ENDS
+      22				END
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 13:01:00
+
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	0018	PARA	PUBLIC	'CODE'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+FACTORIAL  . . . . . . . . . . .  	N PROC	0000	CSEG	Global	Length = 0018
+FACTORIAL1 . . . . . . . . . . .  	L NEAR	0000	CSEG
+F_RET  . . . . . . . . . . . . .  	L NEAR	0016	CSEG
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  lrf_2_2		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     22 Source  Lines
+     22 Total   Lines
+     14 Symbols
+
+  45978 + 447074 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

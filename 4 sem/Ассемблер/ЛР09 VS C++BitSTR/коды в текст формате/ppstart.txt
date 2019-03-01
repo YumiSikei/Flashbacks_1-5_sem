@@ -1,0 +1,64 @@
+.386
+.model FLAT,C
+PUBLIC START
+extern COUNT:near, X_Y:near, SetCler:near, X_U_Y:near
+
+.DATA
+S 	DD 0,0,0,0
+S1 	DD 00001111000011110000111100001111B,1010101B
+           ;0-38 - разр§ды строки
+S2 	DD 00111100001111000011110000111100B,1000001B
+           ;0-38 - разр§ды строки
+L DD 39    ;= длина строки
+; DD он же DWORD - двойное слово, занимает 4 байта
+
+;ЧЭvОЉ°?Нї€ TURBO C
+;1. Њараметры передаютс§ в стек справа налево
+;2. Сункци§ должна сохран§ть регистры DS, CS, SS, BP, SI, DI
+;3. Сункци§ возвращает результат через AX или DX:AX, причем в  DX
+; - старша§ часть числа.
+;4. Эсвобождение стека от параметров выполн§ет вызывающа§ программа
+
+.CODE
+START:
+	; Чогласно соглашению передаем все аргументы по стеку в пр§мом пор§дке   
+   push ebp          
+   mov ebp,esp     
+   
+   ; Эбратный пор§док пушей
+   PUSH L
+   PUSH OFFSET S1     
+   CALL COUNT; (const S: LONGWORD; L:LONGWORD)
+   ADD ESP, 8; Њам§ть освобождаем здесь же
+
+   ; Эни почему то пушили регистры. € хз почему. Цешил оставить как в той лабе.   
+   PUSH 1                
+   PUSH 1  
+   PUSH L   
+   PUSH OFFSET S2 
+   CALL SetCler; (var S:LONGWORD; L:LONGWORD; N:LONGWORD; P:LONGWORD)
+   ADD ESP, 12;  
+
+   PUSH 0
+   PUSH 34 
+   PUSH L
+   PUSH OFFSET S2   
+   CALL SetCler; (var S:LONGWORD; L:LONGWORD; N:LONGWORD; P:LONGWORD)
+   ADD ESP, 12;   
+
+   PUSH L 
+   PUSH OFFSET S2       
+   PUSH OFFSET S1                      
+   CALL X_Y; (var A: LONGWORD; const B:LONGWORD; L:LONGWORD)
+   ADD ESP, 8; разобрано
+   
+   PUSH L 
+   PUSH OFFSET S2       
+   PUSH OFFSET S1                      
+   CALL X_U_Y; (var X: LONGWORD; const Y:LONGWORD; L:LONGWORD)   
+   ADD ESP, 8; разобрано
+   
+   POP EBP
+
+   RET
+END

@@ -1,0 +1,116 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:41:35
+                                                             Page     1-1
+
+
+				
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:41:35
+                                                             Page     1-2
+
+
+				PAGE
+				EXTRN prob:near
+ 0000				     CSEG      SEGMENT PARA PUBLIC 'CODE'
+				               ASSUME CS:CSEG
+						PUBLIC p2
+				                PUBLIC p21
+ 0000				p21 PROC NEAR
+				; 10 ичное целое без знака
+ 0000  55			               Push bp
+ 0001  8B EC			               mov bp, sp
+ 0003  83 C5 04			               add bp, 4
+				  
+				      
+ 0006  8B 46 00			               mov ax, [bp]
+ 0009  8B 5E 02			               mov bx, [bp + 2]
+				
+ 000C  83 C3 0F			               add bx, 15
+				
+				
+ 000F  BA 0001			cy2:           mov dx, 1
+ 0012  23 D0			               and dx, ax
+				
+ 0014  83 C2 30				       add dx, '0'
+ 0017  88 17			               mov [bx], dl
+				                  
+ 0019  D1 E8			               shr ax, 1
+ 001B  3D 0000			               cmp ax, 0
+ 001E  74 03			               je c2con
+ 0020  4B			               dec bx  
+				               ;shr ax, 1
+ 0021  EB EC			               jmp cy2
+				
+ 0023				c2con:
+				
+ 0023  8B C3			               mov ax, bx
+				
+ 0025  5D			               pop bp
+ 0026  C2 0004				       ret 4
+ 0029				p21 ENDP
+				
+ 0029				p2 proc near
+ 0029  55			               Push bp
+ 002A  8B EC			               mov bp, sp
+ 002C  83 C5 04			               add bp, 4
+				
+ 002F  8B 46 00			               mov ax, [bp]
+ 0032  8B 5E 02			               mov bx, [bp + 2]
+ 0035  53			               push bx
+ 0036  50			               push ax
+				
+ 0037  E8 0000 R		               call p21
+ 003A  8B D8			               mov bx, ax
+				
+ 003C  BA 0000 E		               mov dx, offset prob
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:41:35
+                                                             Page     1-3
+
+
+ 003F  B4 09			               mov ah, 9
+ 0041  CD 21			               int 21h 
+				
+ 0043  8B D3			               mov dx, bx
+ 0045  CD 21			               int 21h 
+				
+ 0047  BA 0000 E		               mov dx, offset prob
+ 004A  CD 21			               int 21h 
+				
+ 004C  5D			               pop bp
+ 004D  C2 0004				       ret 4
+				
+ 0050				p2 endp
+ 0050				     CSEG      ENDS
+				               END  
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:41:35
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	0050	PARA	PUBLIC	'CODE'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+C2CON  . . . . . . . . . . . . .  	L NEAR	0023	CSEG
+CY2  . . . . . . . . . . . . . .  	L NEAR	000F	CSEG
+
+P2 . . . . . . . . . . . . . . .  	N PROC	0029	CSEG	Global	Length = 0027
+P21  . . . . . . . . . . . . . .  	N PROC	0000	CSEG	Global	Length = 0029
+PROB . . . . . . . . . . . . . .  	L NEAR	0000		External
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  p2		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     70 Source  Lines
+     70 Total   Lines
+     16 Symbols
+
+  46578 + 444426 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

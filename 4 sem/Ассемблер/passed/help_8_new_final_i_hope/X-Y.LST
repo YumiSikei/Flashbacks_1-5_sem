@@ -1,0 +1,94 @@
+Turbo Assembler	 Version 5.3	    05-15-18 21:56:53	    Page 1
+X-Y.ASM
+
+
+
+      1					 ;—оставить подпрограмму с именем A_B типа
+      2					 ;   Procedure (var A: LONGWORD; const B:LONGWORD; L:LONGWORD)
+      3					 ;выполн€ющую вычитание	битовых	строк A:=A \ B длины L.
+      4
+      5					 .386
+      6	00000000			 .model	FLAT,PASCAL
+      7					 PUBLIC	X_Y
+      8
+      9	00000000			 .CODE
+     10	00000000			 X_Y PROC
+     11					 ; Они опять перепутали	местами	пролог,	но я пофиксил если что
+     12	00000000  55			   PUSH	EBP
+     13	00000001  8B EC			   MOV EBP,ESP
+     14
+     15		  = DWORD PTR[EBP+16]	   X EQU DWORD PTR[EBP+16]	     ;первая строка
+     16		  = DWORD PTR[EBP+12]	   Y EQU DWORD PTR[EBP+12]	     ;вторая строка
+     17		  = DWORD PTR[EBP+8]	   L EQU DWORD PTR[EBP+8]	   ;длина строк
+     18
+     19	00000003  56			   PUSH	ESI
+     20	00000004  57			   PUSH	EDI
+     21
+     22	00000005  8B 4D	08		   MOV ECX,L			 ;CX = длина строки
+     23	00000008  C1 E9	05		   SHR ECX,5
+     24	0000000B  41			   INC ECX
+     25	0000000C  8B 7D	10		   MOV EDI,X
+     26	0000000F  8B 75	0C		   MOV ESI,Y
+     27
+     28					   ; Тут все как в X_U_Y, так что без комментариев. В буквальном смысле. Ахахахаа
+     29
+     30					   ; Опять сразу пример. Пусть X = 111,	а Y = 101
+     31
+     32	00000012			 M1:
+     33					   ; Напомню, что EAX -	наш return из си(не путать со здешним супер pop)
+     34	00000012  8B 06			   MOV EAX,[ESI]
+     35					   ; EAX = 101
+     36	00000014  F7 D0			   NOT EAX	       ;отрицаем содержимое EAX, работает также	как кажется :)
+     37					   ; EAX = 010
+     38	00000016  23 07			   AND EAX,[EDI]		   ;объединяем(Опять записывается в первый)
+     39					   ; EAX = (010	& 111) = 010 (Да, чето мой пример слишком гениален)
+     40	00000018  83 C7	04		   ADD EDI,4
+     41	0000001B  83 C6	04		   ADD ESI,4
+     42					   ; Как обычно	сдвигаем указатели строк на 4 для того,	чтобы обработать числа
+     43					   ; длиной более 32-ух	бит
+     44	0000001E  E2 F2			   LOOP	M1
+     45
+     46	00000020  5F			   POP EDI
+     47	00000021  5E			   POP ESI
+     48	00000022  5D			   POP EBP
+     49					   ; Опять восстановили	стек
+     50	00000023  C2 000C		   RET 12 ; 3 переменных по 4 байта
+     51	00000026			 X_Y ENDP
+     52					 END
+Turbo Assembler	 Version 5.3	    05-15-18 21:56:53	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "05-15-18"
+??FILENAME			  Text	 "X-Y	  "
+??TIME				  Text	 "21:56:53"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 X-Y
+@INTERFACE			  Text	 004H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+L				  Text	 DWORD PTR[EBP+8]
+M1				  Near32 FLAT:0012
+X				  Text	 DWORD PTR[EBP+16]
+X_Y				  Near32 FLAT:0000
+Y				  Text	 DWORD PTR[EBP+12]
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0000 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  0026 Dword  Public  CODE
+

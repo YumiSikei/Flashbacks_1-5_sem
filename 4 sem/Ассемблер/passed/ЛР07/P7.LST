@@ -1,0 +1,92 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:42:13
+                                                             Page     1-1
+
+
+				PAGE
+				EXTRN prob:near
+ 0000				     CSEG      SEGMENT PARA PUBLIC 'CODE'
+				               ASSUME CS:CSEG
+						PUBLIC p7
+				EXTRN p61:proc
+ 0000				p7 PROC NEAR
+ 0000  55			               Push bp
+ 0001  8B EC			               mov bp, sp
+ 0003  83 C5 04			               add bp, 4
+				  
+				      
+ 0006  8B 46 00			               mov ax, [bp]; numb
+ 0009  8B 5E 02			               mov bx, [bp + 2]; str
+				
+ 000C  3D 0000			               cmp ax, 0
+ 000F  7D 08			               jge c7pl
+					       
+ 0011  F7 D8			               neg ax
+ 0013  BD 0001			               mov bp, 1
+ 0016  EB 04 90			               jmp c7m
+				
+ 0019  BD 0000			c7pl:          mov bp, 0
+ 001C  53			c7m:           push bx
+ 001D  50			               push ax
+ 001E  E8 0000 E		               call p61   
+				
+ 0021  83 FD 01			               cmp bp, 1
+ 0024  74 16			               je c7min
+ 0026  8B D8			               mov bx, ax
+ 0028				c7g:          
+				
+ 0028  BA 0000 E		               mov dx, offset prob
+ 002B  B4 09			               mov ah, 9
+ 002D  CD 21			               int 21h 
+				
+ 002F  8B D3			               mov dx, bx
+ 0031  CD 21			               int 21h 
+				
+ 0033  BA 0000 E		               mov dx, offset prob
+ 0036  CD 21			               int 21h 
+				
+ 0038  5D			               pop bp
+ 0039  C2 0004				       ret 4
+ 003C  8B D8			c7min:         mov bx, ax
+ 003E  4B			               dec bx
+ 003F  C6 07 2D			               mov [bx],byte ptr '-'
+ 0042  EB E4			               jmp c7g
+				
+ 0044				p7 ENDP
+ 0044				     CSEG      ENDS
+				               END  
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:42:13
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	0044	PARA	PUBLIC	'CODE'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+C7G  . . . . . . . . . . . . . .  	L NEAR	0028	CSEG
+C7M  . . . . . . . . . . . . . .  	L NEAR	001C	CSEG
+C7MIN  . . . . . . . . . . . . .  	L NEAR	003C	CSEG
+C7PL . . . . . . . . . . . . . .  	L NEAR	0019	CSEG
+
+P61  . . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+P7 . . . . . . . . . . . . . . .  	N PROC	0000	CSEG	Global	Length = 0044
+PROB . . . . . . . . . . . . . .  	L NEAR	0000		External
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  p7		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     52 Source  Lines
+     52 Total   Lines
+     18 Symbols
+
+  46578 + 444426 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

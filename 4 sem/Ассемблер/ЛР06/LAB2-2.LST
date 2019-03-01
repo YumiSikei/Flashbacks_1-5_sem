@@ -1,0 +1,137 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 13:30:32
+
+                                                             Page     1-1
+
+
+ 0000				     SSTACK     SEGMENT PARA STACK  'STACK'
+ 0000  0040[			                DB   64 DUP('СТЕК____')
+	   D1 D2 C5 CA 5F	
+	   5F 5F 5F		
+			 ]	
+				
+ 0200				     SSTACK     ENDS
+				
+ 0000				     DSEG          SEGMENT  PARA PUBLIC 'DATA'
+ 0000  0005			     M         dw  5
+ 0002  0001			     fact      dw  1
+ 0004  0000			               dw  ?
+ 0006				     DSEG          ENDS
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 13:30:32
+
+                                                             Page     1-2
+
+
+				PAGE
+ 0000				     CSEG      SEGMENT PARA PUBLIC 'CODE'
+				               ASSUME CS:CSEG,DS:DSEG,SS:SSTACK
+						
+				                    
+				
+ 0000				p1 proc near ;
+				
+ 0000  83 C4 04			               add sp, 4;  вернуть указатель ст
+				ека обратно
+ 0003  8B EC			               mov bp, sp
+ 0005  8B 46 02			               mov ax, [bp + 2];     вернуть ax
+				   
+ 0008  F7 27				       mul word ptr ds:[bx]; в ax помещ
+				аем результат
+ 000A  89 07			               mov word ptr ds:[bx], ax; в *fac
+				t помещаем результат
+ 000C  C3			               ret
+				
+ 000D				p1 endp	
+				
+ 000D				p2 proc near
+				
+ 000D  8B EC			               mov bp, sp
+ 000F  8B 46 02			               mov ax, [bp + 2];
+ 0012  8B 5E 04			               mov bx, [bp + 4];
+				
+ 0015  3D 0001			               cmp ax, 1; проверка на выход из 
+				рекурсии
+ 0018  76 0D				       jna m2
+				               
+ 001A  48			               dec ax
+				 
+ 001B  53			               push bx;    передача параметров 
+				функции в стек
+ 001C  50				       push ax;   
+ 001D  E8 000D R		               call p2
+				               
+ 0020  E8 0000 R				call p1
+				               
+ 0023  EB 06 90			               jmp a         
+ 0026  C3			             ret
+ 0027				m2:             
+ 0027  C7 07 0001			       mov word ptr ds:[bx], 1; в *fact
+				 помещаем результат  
+ 002B  C3			a:             ret
+				
+ 002C				p2 endp   
+				
+ 002C				     START     PROC FAR
+ 002C  B8 ---- R		               MOV  AX,DSEG ; получаем адресок 
+				секции datasec в ds
+ 002F  8E D8			               MOV  DS,AX
+ 0031  B8 0002 R			       mov ax, offset fact
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 13:30:32
+
+                                                             Page     1-3
+
+
+ 0034  50				       push ax
+ 0035  FF 36 0000 R			       push M
+ 0039  E8 000D R			       call p2
+ 003C  83 C4 04				       add sp, 4
+ 003F  8B 0F					mov cx, word ptr ds:[bx]
+				
+ 0041  B4 4C			 	       MOV  AH,4Ch; команда для дос - з
+				авершить программу
+ 0043  CD 21			               INT 21H; передача управления дос
+ 0045				     START     ENDP
+				               
+ 0045				     CSEG      ENDS
+				               END  START
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 13:30:32
+
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	0045	PARA	PUBLIC	'CODE'
+DSEG . . . . . . . . . . . . . .  	0006	PARA	PUBLIC	'DATA'
+SSTACK . . . . . . . . . . . . .  	0200	PARA	STACK	'STACK'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+A  . . . . . . . . . . . . . . .  	L NEAR	002B	CSEG
+
+FACT . . . . . . . . . . . . . .  	L WORD	0002	DSEG
+
+M  . . . . . . . . . . . . . . .  	L WORD	0000	DSEG
+M2 . . . . . . . . . . . . . . .  	L NEAR	0027	CSEG
+
+P1 . . . . . . . . . . . . . . .  	N PROC	0000	CSEG	Length = 000D
+P2 . . . . . . . . . . . . . . .  	N PROC	000D	CSEG	Length = 001F
+
+START  . . . . . . . . . . . . .  	F PROC	002C	CSEG	Length = 0019
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  lab2_2		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     67 Source  Lines
+     67 Total   Lines
+     22 Symbols
+
+  46432 + 444572 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

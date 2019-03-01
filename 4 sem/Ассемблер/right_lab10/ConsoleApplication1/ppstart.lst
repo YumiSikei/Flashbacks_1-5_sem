@@ -1,0 +1,51 @@
+Microsoft (R) Macro Assembler Version 14.12.25835.0	    05/03/18 00:16:54
+ppstart.asm						     Page 1 - 1
+
+
+				.386
+				.model flat, c
+ 00000000			.code
+				public	_fun1
+ 00000000			_fun1		proc
+ 00000000  C3						ret
+
+ 00000001			_fun1		endp
+				end
+Microsoft (R) Macro Assembler Version 14.12.25835.0	    05/03/18 00:16:54
+ppstart.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000001 DWord	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+_fun1  . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000001 Public C
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000001h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+
+	   0 Warnings
+	   0 Errors

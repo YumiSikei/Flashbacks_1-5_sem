@@ -1,0 +1,82 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 13:25:47
+
+                                                             Page     1-1
+
+
+				EXTRN factorial: near
+				
+ 0000				STK SEGMENT PARA STACK 'STACK'
+ 0000  0064[				db 100 dup(0)
+	   00			
+			 ]	
+				
+ 0064				STK ENDS
+				
+ 0000				DSEG SEGMENT PARA PUBLIC 'DATA'
+ 0000  0005				X dw 5
+ 0002  0000				F dw ?
+				
+ 0004				DSEG ENDS
+				
+ 0000				CSEG SEGMENT PARA PUBLIC 'CODE'
+					assume CS:CSEG, DS:DSEG, SS:STK
+ 0000				main:
+ 0000  B8 ---- R			mov ax, DSEG
+ 0003  8E D8				mov ds, ax
+				
+ 0005  A1 0000 R			mov ax,X
+ 0008  BB 0002 R			mov bx, offset F
+				
+ 000B  53				push bx
+ 000C  50				push ax
+				
+ 000D  E8 0000 E			call factorial	
+				
+ 0010  BB 0004				mov bx, word ptr[4]
+ 0013  89 07				mov word ptr[bx], ax
+ 0015  8B 0F				mov cx, word ptr [bx]
+					
+ 0017  83 C4 04				add sp, 4
+				
+ 001A  B8 4C00				mov ax, 4c00h
+ 001D  CD 21				int 21h
+ 001F				CSEG ENDS
+				
+				END main
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 13:25:47
+
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	001F	PARA	PUBLIC	'CODE'
+DSEG . . . . . . . . . . . . . .  	0004	PARA	PUBLIC	'DATA'
+STK  . . . . . . . . . . . . . .  	0064	PARA	STACK	'STACK'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+F  . . . . . . . . . . . . . . .  	L WORD	0002	DSEG
+FACTORIAL  . . . . . . . . . . .  	L NEAR	0000		External
+
+MAIN . . . . . . . . . . . . . .  	L NEAR	0000	CSEG
+
+X  . . . . . . . . . . . . . . .  	L WORD	0000	DSEG
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  lrf_2_1		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     37 Source  Lines
+     37 Total   Lines
+     19 Symbols
+
+  46508 + 446544 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

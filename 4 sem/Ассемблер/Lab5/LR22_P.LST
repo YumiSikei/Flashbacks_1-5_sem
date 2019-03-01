@@ -1,0 +1,78 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 12:36:44
+
+                                                             Page     1-1
+
+
+				EXTRN factorial: near
+				
+ 0000				STK SEGMENT PARA STACK 'STACK'
+ 0000  0064[				db 100 dup(0)
+	   00			
+			 ]	
+				
+ 0064				STK ENDS
+				
+ 0000				DSEG SEGMENT PARA PUBLIC 'DATA'
+ 0000  0005				X dw 5
+ 0002  0000				F dw ?
+				
+ 0004				DSEG ENDS
+				
+ 0000				CSEG SEGMENT PARA PUBLIC 'CODE'
+					assume CS:CSEG, DS:DSEG, SS:STK
+ 0000				main:
+ 0000  B8 ---- R			mov ax, DSEG
+ 0003  8E D8				mov ds, ax
+				
+ 0005  8B 16 0000 R			mov dx,X
+ 0009  B9 0002 R			mov cx, offset F
+ 000C  B8 0001				mov ax, 1
+ 000F  E8 0000 E			call factorial	
+				
+ 0012  BB 0004				mov bx, word ptr[4]
+ 0015  89 07				mov word ptr[bx], ax
+					
+ 0017  8B 0F				mov cx, word ptr[bx]
+				
+ 0019  B8 4C00				mov ax, 4c00h
+ 001C  CD 21				int 21h
+ 001E				CSEG ENDS
+				
+				END main
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 12:36:44
+
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	001E	PARA	PUBLIC	'CODE'
+DSEG . . . . . . . . . . . . . .  	0004	PARA	PUBLIC	'DATA'
+STK  . . . . . . . . . . . . . .  	0064	PARA	STACK	'STACK'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+F  . . . . . . . . . . . . . . .  	L WORD	0002	DSEG
+FACTORIAL  . . . . . . . . . . .  	L NEAR	0000		External
+
+MAIN . . . . . . . . . . . . . .  	L NEAR	0000	CSEG
+
+X  . . . . . . . . . . . . . . .  	L WORD	0000	DSEG
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  lr22_p		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     33 Source  Lines
+     33 Total   Lines
+     19 Symbols
+
+  46530 + 446554 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

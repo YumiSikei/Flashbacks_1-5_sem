@@ -1,0 +1,84 @@
+Turbo Assembler	 Version 5.3	    04-22-18 23:04:28	    Page 1
+PPSTART.ASM
+
+
+
+      1					 .386
+      2	00000000			 .model	FLAT,PASCAL
+      3					 PUBLIC	START
+      4					 extern	COUNT:near, X_Y:near, SetCler:near;, X_U_Y:near
+      5
+      6	00000000			 .DATA
+      7	00000000  00000000 00000000   +	 S	 DD 0,0,0,0
+      8		  00000000 00000000
+      9	00000010  0F0F0F0F 00000055	 S1	 DD 00001111000011110000111100001111B,1010101B
+     10						    ;0-38 - разряды строки
+     11	00000018  3C3C3C3C 00000041	 S2	 DD 00111100001111000011110000111100B,1000001B
+     12						    ;0-38 - разряды строки
+     13	00000020  00000027		 L DD 39    ;= длина строки
+     14
+     15
+     16	00000024			 .CODE
+     17	00000000			 START:
+     18	00000000  68 00000010r		    PUSH OFFSET	S1	     ;caoaeeeaaai aa?an	s1
+     19	00000005  FF 35	00000020r	    PUSH L		     ;caoaeeeaaai aeeio	no?iee
+     20	0000000B  E8 00000000e		    CALL COUNT
+     21
+     22	00000010  68 00000010r		    PUSH OFFSET	S1	     ;caoaeeeaaai aa?an	S
+     23	00000015  6A 01			    PUSH 1		     ;?ac?ya S
+     24	00000017  6A 01			    PUSH 1		     ;ia?aiao? P - caanu iu iaioeyai 34e ?ac?ya
+     25	00000019  E8 00000000e		    CALL SetCler	     ;S2,34
+     26
+     27	0000001E  68 00000018r		    PUSH OFFSET	S2
+     28	00000023  6A 22			    PUSH 34
+     29	00000025  6A 00			    PUSH 0		      ;caanu iu	caaaai 34e ?ac?ya aaeieoae
+     30	00000027  E8 00000000e		    CALL SetCler	      ;S2,34
+     31
+     32	0000002C  68 00000010r		    PUSH OFFSET	S1	     ;aa?an ia?aie no?iee
+     33	00000031  68 00000018r		    PUSH OFFSET	S2	     ;aa?an aoi?ie no?iee
+     34	00000036  FF 35	00000020r	    PUSH L		     ;aeeia no?iee
+     35	0000003C  E8 00000000e		    CALL X_Y		     ; S1,S2,38
+     36
+     37
+     38	00000041  C3			 RET;
+     39					 END
+Turbo Assembler	 Version 5.3	    04-22-18 23:04:28	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "04-22-18"
+??FILENAME			  Text	 "PPSTART "
+??TIME				  Text	 "23:04:28"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 PPSTART
+@INTERFACE			  Text	 004H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+COUNT				  Near32 ----:---- Extern
+L				  Dword	 FLAT:0020
+S				  Dword	 FLAT:0000
+S1				  Dword	 FLAT:0010
+S2				  Dword	 FLAT:0018
+SETCLER				  Near32 ----:---- Extern
+START				  Near32 FLAT:0000
+X_Y				  Near32 ----:---- Extern
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0024 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  0042 Dword  Public  CODE
+

@@ -1,0 +1,79 @@
+Turbo Assembler	 Version 5.3	    05-23-18 12:14:39	    Page 1
+X_U_Y.ASM
+
+
+
+      1					 ;Составить подпрограмму с именем X_U_Y	типа
+      2					 ;   Procedure (var X: LONGWORD; const Y:LONGWORD; L:LONGWORD)
+      3					 ;выполн€ющую объединение битовых строк	X:=X U Y длины L.
+      4
+      5					 .386
+      6	00000000			 .model	FLAT,C
+      7					 PUBLIC	X_U_Y
+      8
+      9	00000000			 .CODE
+     10	00000000			 X_U_Y PROC
+     11
+     12					 ; Тут был нарушен порядок. Как	это вообще работало?
+     13	00000000  55			 PUSH EBP
+     14	00000001  8B EC			 MOV EBP,ESP
+     15
+     16		  = DWORD PTR[EBP+8]	 X EQU DWORD PTR[EBP+8]		  ;первая строка
+     17		  = DWORD PTR[EBP+12]	 Y EQU DWORD PTR[EBP+12]	   ;вторая строка
+     18		  = DWORD PTR[EBP+16]	 L EQU DWORD PTR[EBP+16]	    ;длина строк
+     19
+     20	00000003  8B 4D	10		   MOV ECX,L			   ;CX = длина строк
+     21	00000006  C1 E9	05		   SHR ECX,5
+     22	00000009  41			   INC ECX
+     23	0000000A  8B 5D	08		   MOV EBX,X
+     24	0000000D  8B 55	0C		   MOV EDX,Y
+     25
+     26	00000010			 M1:
+     27	00000010  8B 02			   MOV EAX,[EDX]
+     28					   ; Помещаем Y(1000) как результат работы подпрограммы
+     29	00000012  0B 03			   OR EAX, [EBX]
+     30	00000014  83 C3	04		   ADD EBX,4
+     31	00000017  83 C2	04		   ADD EDX,4
+     32
+     33	0000001A  E2 F4			   LOOP	M1
+     34
+1    35	0000001C  C3				 RET	 00000h
+     36	0000001D			 X_U_Y ENDP
+     37					 END
+Turbo Assembler	 Version 5.3	    05-23-18 12:14:39	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "05-23-18"
+??FILENAME			  Text	 "X_U_Y	  "
+??TIME				  Text	 "12:14:39"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 X_U_Y
+@INTERFACE			  Text	 001H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+L				  Text	 DWORD PTR[EBP+16]
+M1				  Near32 FLAT:0010
+X				  Text	 DWORD PTR[EBP+8]
+X_U_Y (_X_U_Y)			  Near32 FLAT:0000
+Y				  Text	 DWORD PTR[EBP+12]
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0000 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  001D Dword  Public  CODE
+

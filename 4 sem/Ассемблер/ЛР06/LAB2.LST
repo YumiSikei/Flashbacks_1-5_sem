@@ -1,0 +1,117 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 12:51:08
+
+                                                             Page     1-1
+
+
+ 0000				     SSTACK     SEGMENT PARA STACK  'STACK'
+ 0000  0040[			                DB   64 DUP('СТЕК____')
+	   D1 D2 C5 CA 5F	
+	   5F 5F 5F		
+			 ]	
+				
+ 0200				     SSTACK     ENDS
+				
+ 0000				     DSEG          SEGMENT  PARA PUBLIC 'DATA'
+ 0000  0005			     M         dw  5
+ 0002  0001			     fact      dw  1
+ 0004  0000			               dw  ?
+ 0006				     DSEG          ENDS
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 12:51:08
+
+                                                             Page     1-2
+
+
+				PAGE
+ 0000				     CSEG      SEGMENT PARA PUBLIC 'CODE'
+				               ASSUME CS:CSEG,DS:DSEG,SS:SSTACK
+						
+				
+ 0000				p1 proc near ; вход - bx выход -  ax
+				
+ 0000  83 FB 01			               cmp bx, 1
+ 0003  76 08				       jna m22
+					       
+ 0005  4B				       dec bx
+				
+ 0006  E8 0000 R		               call p1
+				
+ 0009  43			               inc bx
+ 000A  F7 E3				       mul bx
+ 000C  C3			               ret
+ 000D				m22:       
+ 000D  B8 0001				       mov ax, 1    
+ 0010  C3			               ret
+ 0011				p1 endp	
+				
+ 0011				p2 proc near
+				; поиенять на вызов функции из 1 задачи
+ 0011  8B DC			               mov bx, sp
+ 0013  36: 8B 4F 02		               mov cx, ss:[bx + 2];
+				
+ 0017  E8 0000 R		               call p1
+				
+ 001A  8B DC			               mov bx, sp
+ 001C  36: 8B 4F 04			       mov cx, ss:[bx + 4]
+				
+ 0020  8B D9			               mov bx, cx
+ 0022  89 07				       mov [bx], ax
+ 0024  C3			             ret
+ 0025				p2 endp   
+				
+ 0025				     START     PROC FAR
+ 0025  B8 ---- R		               MOV  AX,DSEG ; получаем адресок 
+				секции datasec в ds
+ 0028  8E D8			               MOV  DS,AX
+ 002A  B8 0002 R			       mov ax, offset fact
+ 002D  50				       push ax
+ 002E  FF 36 0000 R			       push M
+ 0032  E8 0011 R			       call p2
+ 0035  83 C4 04				       add sp, 4
+				
+ 0038  B4 4C			 	       MOV  AH,4Ch; команда для дос - з
+				авершить программу
+ 003A  CD 21			               INT 21H; передача управления дос
+ 003C				     START     ENDP
+				               
+ 003C				     CSEG      ENDS
+				               END  START
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 12:51:08
+
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	003C	PARA	PUBLIC	'CODE'
+DSEG . . . . . . . . . . . . . .  	0006	PARA	PUBLIC	'DATA'
+SSTACK . . . . . . . . . . . . .  	0200	PARA	STACK	'STACK'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+FACT . . . . . . . . . . . . . .  	L WORD	0002	DSEG
+
+M  . . . . . . . . . . . . . . .  	L WORD	0000	DSEG
+M22  . . . . . . . . . . . . . .  	L NEAR	000D	CSEG
+
+P1 . . . . . . . . . . . . . . .  	N PROC	0000	CSEG	Length = 0011
+P2 . . . . . . . . . . . . . . .  	N PROC	0011	CSEG	Length = 0014
+
+START  . . . . . . . . . . . . .  	F PROC	0025	CSEG	Length = 0017
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  lab2		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     61 Source  Lines
+     61 Total   Lines
+     21 Symbols
+
+  46446 + 444558 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

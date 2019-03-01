@@ -1,0 +1,137 @@
++#1 bubble sorting
++def bubble(seq):
++	L = len(seq)
++    for i in range(L):
++        for n in range(1, L - i):
++            if seq[n] < seq[n - 1]:
++                seq[n - 1], seq[n] = seq[n], seq[n - 1]
++    return seq
++
++#2 cocktail(shaker) sorting
++def cocktail(seq):
++	lower_bound = -1
++    upper_bound = len(seq) - 1
++    swapped = True
++    while swapped:
++        swapped = False
++        lower_bound += 1
++        for i in range(lower_bound, upper_bound):
++            if seq[i] > seq[i + 1]:
++                seq[i], seq[i + 1] = seq[i + 1], seq[i]
++                swapped = True
++        if not swapped:
++            break
++        swapped = False
++        upper_bound -= 1
++        for i in range(upper_bound, lower_bound, -1):
++            if seq[i] < seq[i - 1]:
++                seq[i], seq[i - 1] = seq[i - 1], seq[i]
++                swapped = True
++    return seq
++
++#merge sorting
++def merge(left, right):
++    result = []
++    n, m = 0, 0
++    while n < len(left) and m < len(right):
++        if left[n] <= right[m]:
++            result.append(left[n])
++            n += 1
++        else:
++            result.append(right[m])
++            m += 1
++
++    result += left[n:]
++    result += right[m:]
++    return result
++def sort(seq):
++    if len(seq) <= 1:
++        return seq
++    middle = int(len(seq) / 2)
++    left = sort(seq[:middle])
++    right = sort(seq[middle:])
++    return merge(left, right)
++
++#4 shell sorting
++def shell(seq):
++	gaps = [x for x in range(len(seq) // 2, 0, -1)]
++
++    for gap in gaps:
++        for i in range(gap, len(seq)):
++            temp = seq[i]
++            j = i
++            while j >= gap and seq[j - gap] > temp:
++                seq[j] = seq[j - gap]
++                j -= gap
++            seq[j] = temp
++
++    return seq
++
++
++#5 quick sorting
++if len(seq) <= 1:
++        return seq
++    else:
++        pivot = seq[0]
++        left, right = [], []
++        for x in seq[1:]:
++            if x < pivot:
++                left.append(x)
++            else:
++                right.append(x)
++        return sort(left) + [pivot] + sort(right)
++
++#6 insertion sorting
++def insertion(seq):
++	for n in range(1, len(seq)):
++        item = seq[n]
++        hole = n
++        while hole > 0 and seq[hole - 1] > item:
++            seq[hole] = seq[hole - 1]
++            hole = hole - 1
++        seq[hole] = item
++    return seq
++
++#7 selection sort
++def selection(seq):
++	for i in range(0, len(seq)):
++        iMin = i
++        for j in range(i+1, len(seq)):
++            if seq[iMin] > seq[j]:
++                iMin = j
++        if i != iMin:
++            seq[i], seq[iMin] = seq[iMin], seq[i]
++
++    return seq
++
++#8 heap sorting
++def max_heapify(seq, i, n):
++    l = 2 * i + 1
++    r = 2 * i + 2
++
++    if l <= n and seq[l] > seq[i]:
++        largest = l
++    else:
++        largest = i
++    if r <= n and seq[r] > seq[largest]:
++        largest = r
++
++    if largest != i:
++        seq[i], seq[largest] = seq[largest], seq[i]
++        max_heapify(seq, largest, n)
++
++def build_heap(seq):
++    n = len(seq) - 1
++    for i in range(n//2, -1, -1):
++        max_heapify(seq, i, n)
++
++
++def sort(seq):
++    build_heap(seq)
++    heap_size = len(seq) - 1
++    for x in range(heap_size, 0, -1):
++        seq[0], seq[x] = seq[x], seq[0]
++        heap_size = heap_size - 1
++        max_heapify(seq, 0, heap_size)
++
++    return seq

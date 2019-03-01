@@ -1,0 +1,354 @@
+program Project1;
+{$APPTYPE CONSOLE}
+
+uses
+  SysUtils;
+
+type
+  Massiv = array [1 .. 10] of Integer;
+
+var
+  I, J, N, B, Min: Integer;
+  Buf: Integer;
+  A: Massiv;
+  F1: Boolean;
+  Ch: Char;
+
+  /// //////////////////////////////////////////////////////////////////////////
+procedure NewArray(var A: Massiv; var N: Integer);
+begin
+  Writeln('Vvedite kolichestvo');
+  Readln(N);
+  Writeln('Vvedite ', N, ' elementov');
+  for I := 1 to N do
+    Readln(A[I]);
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+procedure PrVs(A: Massiv; N: Integer);
+begin
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+
+  for I := 2 to N do
+  begin
+    B := A[I];
+    J := I - 1;
+    while (B < A[J]) and (J >= 1) do
+    begin
+      A[J + 1] := A[J];
+      Dec(J);
+    end;
+    A[J + 1] := B;
+  end;
+
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+procedure VsSBar(A: Massiv; N: Integer);
+var
+  A2: array [0 .. 10] of Integer;
+begin
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+
+  for I := 1 to N do
+    A2[I] := A[I];
+
+  for I := 2 to N do
+    if A2[I - 1] > A2[I] then
+    begin
+      A2[0] := A2[I];
+      J := I - 1;
+      while A2[J] > A2[0] do
+      begin
+        A2[J + 1] := A2[J];
+        J := J - 1;
+      end;
+      A2[J + 1] := A2[0];
+    end;
+
+  for I := 1 to N do
+    Write(A2[I]:3);
+  Writeln;
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+procedure PrVb(A: Massiv; N: Integer);
+begin
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+
+  for I := 1 to N do
+  begin
+    Min := I;
+    for J := I + 1 to N do
+    begin
+      if A[J] < A[Min] then
+        Min := J;
+    end;
+
+    Buf := A[I];
+    A[I] := A[Min];
+    A[Min] := Buf;
+  end;
+
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+procedure Pz(A: Massiv; N: Integer);
+begin
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+
+  B := 0;
+  repeat
+
+    for I := 1 to N - 1 - B do
+      if A[I] > A[I + 1] then
+      begin ;
+        Buf := A[I];
+        A[I] := A[I + 1];
+        A[I + 1] := Buf;
+      end;
+
+    B := B + 1
+  until (N - B = 1);
+
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+procedure PzM(A: Massiv; N: Integer);
+begin
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+
+  B := 0;
+  repeat
+    F1 := False;
+
+    for I := 1 to N - 1 - B do
+      if A[I] > A[I + 1] then
+      begin ;
+        Buf := A[I];
+        A[I] := A[I + 1];
+        A[I + 1] := Buf;
+        F1 := True;
+      end;
+
+    B := B + 1
+  until not(F1) or (N - B = 1);
+
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+procedure Shaker(A: Massiv; N: Integer);
+var
+  L, R, T: Integer;
+begin
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+
+  L := 2;
+  R := N;
+  repeat
+    for J := R downto L do
+      if A[J - 1] > A[J] then
+      begin
+        B := A[J - 1];
+        A[J - 1] := A[J];
+        A[J] := B;
+        T := J;
+      end;
+    L := T + 1;
+    for J := L to R do
+      if A[J - 1] > A[J] then
+      begin
+        B := A[J - 1];
+        A[J - 1] := A[J];
+        A[J] := B;
+        T := J;
+      end;
+    R := T - 1;
+  until L > R;
+
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+procedure Shell(A: Massiv; N: Integer);
+var
+  K, T: Integer;
+  H: array [1 .. 4] of Integer;
+begin
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+
+  H[1] := 7;
+  H[2] := 3;
+  H[3] := 1;
+  for T := 1 to 3 do
+  begin
+    K := H[T];
+    for I := K + 1 to N do
+    begin
+      B := A[I];
+      J := I - K;
+      while (B < A[J]) and (J > 0) do
+      begin
+        A[J + K] := A[J];
+        J := J - K;
+      end;
+      A[J + K] := B;
+    end;
+  end;
+
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+procedure qSort(var A: Massiv; L, R: Integer);
+var
+  I, J, Mid: Integer;
+begin
+  I := L;
+  J := R;
+  Mid := A[(I + J) div 2];
+  repeat
+    while A[I] < Mid do
+      Inc(I);
+    while A[J] > Mid do
+      Dec(J);
+    if I <= J then
+    begin
+      Buf := A[I];
+      A[I] := A[J];
+      A[J] := Buf;
+      Inc(I);
+      Dec(J);
+    end;
+  until I > J;
+  if L < J then
+    qSort(A, L, J);
+  if I < R then
+    qSort(A, I, R);
+end;
+
+procedure Hoar(A: Massiv; N: Integer);
+var
+  L, R, T: Integer;
+begin
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+
+  qSort(A, 1, N);
+
+  for I := 1 to N do
+    Write(A[I]:3);
+  Writeln;
+end;
+
+/// ////////////////////////////////////////////////////////////////////////////
+begin
+  Writeln('   2 - Sort. prostaya vstavka');
+  Writeln('   3 - Sort. vstavka s bar"erom');
+  Writeln('   4 - Sort. prostoy vibor');
+  Writeln('   5 - Sort. puzirek');
+  Writeln('   6 - Sort. puzirek_F1');
+  Writeln('   7 - Sort. sheikernaya');
+  Writeln('   8 - Sort. Shella');
+  Writeln('   9 - Sort. Hoara');
+
+  Writeln;
+  NewArray(A, N);
+
+  Writeln('==========================================');
+  Writeln('2:');
+  PrVs(A, N);
+  Writeln('3:');
+  VsSBar(A, N);
+  Writeln('4:');
+  PrVb(A, N);
+  Writeln('5:');
+  Pz(A, N);
+  Writeln('6:');
+  PzM(A, N);
+  Writeln('7:');
+  Shaker(A, N);
+  Writeln('8:');
+  Shell(A, N);
+  Writeln('9:');
+  Hoar(A, N);
+  Writeln('==========================================');
+  Readln;
+
+  {
+    repeat
+    //меню
+    Writeln;
+    Writeln;
+    Writeln('   Menu:');
+    Writeln('   1 - New array');
+    Writeln('   2 - Sort. prostaya vstavka');
+    Writeln('   3 - Sort. vstavka s bar"erom');
+    Writeln('   4 - Sort. prostoy vibor');
+    Writeln('   5 - Sort. puzirek');
+    Writeln('   6 - Sort. puzirek_F1');
+    Writeln('   7 - Sort. sheikernaya');
+    Writeln('   8 - Sort. Shella');
+    Writeln('   9 - Sort. Hoara');
+    Write('-->');
+
+    Readln(Ch);
+
+    Writeln;
+
+    //выбор действия
+    case Ch of
+    '1':
+    NewArray(A, N);
+    '2':
+    PrVs(A, N);
+    '3':
+    VsSBar(A, N);
+    '4':
+    PrVb(A, N);
+    '5':
+    Pz(A, N);
+    '6':
+    PzM(A, N);
+    '7':
+    Shaker(A, N);
+    '8':
+    Shell(A, N);
+    '9':
+    Hoar(A, N);
+    end;
+
+    until Ch = '0'; }
+
+end.

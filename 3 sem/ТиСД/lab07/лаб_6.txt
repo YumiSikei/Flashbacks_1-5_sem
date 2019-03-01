@@ -1,0 +1,680 @@
+#include <stdio.h> 
+#include <stdlib.h>
+#include <assert.h>
+#include <math.h>
+#include <errno.h>
+#include <string.h>
+#include <io.h>
+
+#define ERR_NO_DELETE -1
+#define ERR_MEMORY 2
+#define ERR_FILE 3
+#define OK 0
+
+#define MAX_CHAR 50
+
+unsigned long long tick(void)
+{
+    unsigned long long d;
+    __asm__ __volatile__("rdtsc" : "=A" (d) );
+    return d;
+}
+
+
+int delete_by_first_letter(FILE *stream,const char letter)
+{
+	int code = OK;
+	int nobj;
+	char *text = NULL;
+	char word[MAX_CHAR];
+	int len_word = 0;
+	//int count;
+	int c;
+	fseek(stream, 0, SEEK_END);
+	nobj = ftell(stream) + 2;
+	
+	//printf("\nsize = %d", nobj);
+	text = calloc(nobj, sizeof(char));
+	if (text)
+	{
+		rewind(stream);
+		while ((c = fscanf(stream, "%s", word)) == 1)
+		{
+			//printf("sdsds %s \n ", word);
+			if (word[0] != letter)
+			{
+				strcat(text, word);
+				strcat(text, "\n");
+			}
+			else
+				len_word += strlen(word);
+			//printf("seese %s \n", text);
+		}
+		
+		rewind(stream);
+		fprintf(stream, "%s",text);
+		chsize(fileno(stream), strlen(text));
+	}
+	else
+		code = ERR_MEMORY;
+	return code;
+}
+
+
+struct tree_node
+{
+    //const char *name;
+	char name[MAX_CHAR];
+    struct tree_node *child[2]; // 0 - лево 1 - право
+    
+};
+
+struct param_balance
+{
+	struct tree_node*head;
+	int count;
+};
+
+
+
+
+struct tree_node* create_node(const char *name)
+{
+    struct tree_node *node = malloc(sizeof(struct tree_node));
+    if (node)
+    {
+        //node->name = ame;
+		strcpy(node->name, name);
+        node->child[0] = NULL;
+        node->child[1] = NULL;
+    }
+    return node;
+}
+
+
+void to_s(struct tree_node *n, int spaces)
+{
+	char buf[100];
+ if(n!=NULL)
+ {
+   memset(buf, ' ', spaces);
+   buf[spaces]=0;
+   strcat(buf, "%s\n");
+   spaces+=5;
+   to_s(n->child[0], spaces);
+   printf(buf, n->name);
+   to_s(n->child[1], spaces);
+ }
+}
+
+
+
+void add_balance_tree(struct param_balance *param, struct tree_node *add)
+{
+	param->count++; // поскольку добавляем элемент, их становится на 1 больше
+	int inc = (int)log2(param->count); // определяем на какой позиции находится старший бит числа 
+	if (inc == 0)
+	{
+		param->head = add; //ежели дерево нулевое (пустое) добавим первый элемент
+	}
+	else
+	{
+		int level = 1; // уровень дерева, на который каждый раз переходим
+		int sh;        // на сколько битов нужно сдвинуть, чтобы определить тот, что укажет путь
+		int ind;       // индекс ребенка  - 0 левый 1 - правый
+		struct tree_node* cur = param->head; // указатель на текущий элемнт дерева
+		
+		while(cur != NULL)
+		{
+			sh = inc - level; // определяем бит, нужный для определения паправления ветки на очередной итерации
+			//printf("sh = %d\n", sh);
+			ind = (param->count>>sh) & 1; // вычленяем этот бит из числа 0 - лево 1 - право
+			
+			
+			//if (cur->child[ind] == NULL)
+			if (sh == 0) // если мы дошли до самого младшего бита числа, значит это конечная остановочка добавляемого
+			{
+				cur->child[ind] = add;
+				break;
+			}
+			cur = cur->child[ind]; // двигаемся дальше в нужном направлении
+			level++; // переходим на следующий уровень дерева
+			
+		}
+	}
+	//to_s(param->head, 0);
+}
+
+int have_simple(struct tree_node*head, char *find)
+{
+	if (head != NULL)
+	{
+		if (strcmp(head->name, find) == 0)
+			return 1;
+		else
+		{
+			if (have_simple(head->child[0], find) == 1)
+				return 1;
+			if (have_simple(head->child[1], find) == 1)
+				return 1;
+		}
+	}
+	return 0;
+}
+
+int have_first_word(struct tree_node*head, char find, int number) //при вызове из main = 1
+{
+	int numb;
+	if (head != NULL)
+	{
+		if (head->name[0] ==  find)
+		{
+			return number;
+		}
+		else
+		{
+			// сдвиг и младшим разрядом становится 0
+			if ((numb = have_first_word(head->child[0], find, number<<1)) != 0) 
+			{
+				return numb;
+			}
+			if ((numb = have_first_word(head->child[1], find, (number<<1) | 1)) != 0)
+			{
+				// сдвиг и младшим разрядом становится 1
+				return numb;
+			}
+		}
+	}
+	return 0;
+}
+
+void delete_by_number(struct param_balance *param, int number)
+{
+	if (param->count == 1 )
+	{
+		// если элемент единственный - удаляем его
+		// оставляем дерево пустым
+		param->count--;
+		free(param->head);
+		param->head = NULL;
+		return;
+	}
+	
+	int inc_repl = (int)log2(param->count); // определяем на какой позиции находится старший бит числа 
+	int inc_del = (int)log2(number); // определяем на какой позиции находится старший бит числа 
+	struct tree_node * del;// найти удаляемый элемент
+	struct tree_node * mum_repl;// найти мамочку заменяемого (последнего) элемента
+	
+	// поиск структурки удаляемого
+	if (inc_del == 0)
+	{
+		// удаляемый -  1 элемент
+		del = param->head;
+	}
+	else
+	{
+		int level = 1; // уровень дерева, на который каждый раз переходим
+		int sh;        // на сколько битов нужно сдвинуть, чтобы определить тот, что укажет путь
+		int ind;       // индекс ребенка  - 0 левый 1 - правый
+		struct tree_node* cur = param->head; // указатель на текущий элемнт дерева
+		
+		while(cur != NULL)
+		{
+			sh = inc_del - level; // определяем бит, нужный для определения паправления ветки на очередной итерации
+			ind = (number>>sh)&1; // вычленяем этот бит из числа 0 - лево 1 - право
+			
+			
+			//if (cur->child[ind] == NULL)
+			if (sh == 0) // если мы дошли до самого младшего бита числа, значит мы дошли до сруктурки удаляемого
+			{
+				del = cur->child[ind];
+				break;
+			}
+			cur = cur->child[ind]; // двигаемся дальше в нужном направлении
+			level++; // переходим на следующий уровень дерева
+			
+		}
+	}
+	
+	// ищем мамочку последнего
+	if (inc_repl == 0)
+	{
+		assert(0); // да не может быть такого
+	}
+	else
+	{
+		int level = 1; // уровень дерева, на который каждый раз переходим
+		int sh;        // на сколько битов нужно сдвинуть, чтобы определить тот, что укажет путь
+		int ind;       // индекс ребенка  - 0 левый 1 - правый
+		struct tree_node* cur = param->head; // указатель на текущий элемнт дерева
+		
+		while(cur != NULL)
+		{
+			sh = inc_repl - level; // определяем бит, нужный для определения паправления ветки на очередной итерации
+			ind = (param->count>>sh)&1; // вычленяем этот бит из числа 0 - лево 1 - право
+
+			if (sh == 0) // если мы дошли до самого младшего бита числа, значит это конечная остановочка добавляемого
+			{
+				mum_repl = cur;
+				break;
+			}
+			cur = cur->child[ind]; // двигаемся дальше в нужном направлении
+			level++; // переходим на следующий уровень дерева
+			
+		}
+	}
+	
+	// заменяем данные удаляемого на данные заменяемого
+	del->name[0] = 0;
+	strcat(del->name, mum_repl->child[param->count & 1]->name); // ребенок мамочки заменяемого определяется последним битом числа
+	// освобождаем заменяемый
+	free(mum_repl->child[param->count & 1]);
+	// маочка заменяемого ссылается на NULL
+	mum_repl->child[param->count & 1] = NULL;
+	// декремент количества элементов дерева 
+	param->count--;
+}
+
+void del_all_begin_letter(struct param_balance *param, int letter)
+{
+	int del = 0;
+	while (del = have_first_word(param->head, letter, 1), del!= 0)
+	{
+		delete_by_number(param, del);
+		//fprintf(stderr, "==== level %10I64d   %10I64d\n", t2 - t1, t4- t3);
+	}
+	//fprintf(stderr, "==== level %10I64d \n", t2 - t1);
+}
+
+int find_knot(struct tree_node*head, char *find) //при вызове из main = 1
+{
+	if (head != NULL)
+	{
+		if (strcmp(head->name, find) == 0)
+		{
+			//printf("find number - %d \n", number);
+			printf("\nFINDING KNOT \n");
+			printf("\tadress %p \n", head);
+			printf(" \tdata %s\n", head->name);
+			printf("\n left                right");
+			printf("\n %16p   %16p", head->child[0], head->child[1]);
+			if (head->child[0])
+				printf("\n %16s ", head->child[0]->name);
+			else
+				printf("\n           ");
+			if (head->child[1])
+				printf("  %16s\n", head->child[1]->name);
+			else
+				printf("\n\n");
+			return 1;
+		}
+		else
+		{
+			// сдвиг и младшим разрядом становится 0
+			if ((find_knot(head->child[0], find)) != 0) 
+			{
+				return 1;
+			}
+			if ((find_knot(head->child[1], find)) != 0)
+			{
+				// сдвиг и младшим разрядом становится 1
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+void printf_tree(struct tree_node *head)
+{	
+	if (head != NULL)
+	{
+		if (head->child[0])
+		{
+			printf(" %s --> %s \n", head->name,  head->child[0]->name);
+		}
+		if (head->child[1])
+		{
+			printf(" %s --> %s \n", head->name,  head->child[1]->name);
+		}
+		printf_tree(head->child[0]);
+		printf_tree(head->child[1]);
+	}
+}
+
+int scan_to_file_words(FILE *stream, struct param_balance *param)
+{
+	int res = 0;
+	char buf[MAX_CHAR];
+	struct tree_node* cur;
+	int c;
+	while ((c = fscanf(stream, "%s", buf)) == 1)
+	{
+		cur = create_node(buf);
+		if (cur)
+			add_balance_tree(param, cur);
+		else
+			return ERR_MEMORY;
+	}
+	
+	return res;
+}
+
+void free_head(struct tree_node* head)
+{
+	if (head)
+	{
+		free_head(head->child[0]);
+		free_head(head->child[1]);
+		free(head);
+	}
+}
+
+void free_tree(struct param_balance *param)
+{
+	free_head(param->head);
+	param->head = NULL;
+	param->count = 0;
+}
+
+void copy(char *file, char *file1)
+{
+	FILE *in = fopen(file, "w");
+	FILE *out = fopen(file1, "r");
+	char str[MAX_CHAR];
+	while( fscanf(out, "%s", str) != EOF)
+	{
+		fprintf(in, "%s\n", str);
+	}
+	fclose(in);
+	fclose(out);
+}
+
+void comp(char *file, char *file1, char *file2)
+{
+	unsigned long long t01 = 0, t02 = 0;
+	struct param_balance *param = malloc(sizeof(struct param_balance));
+	param->head = NULL;
+	param->count = 0;
+	size_t iter = 100;
+	size_t iter1 = 100;
+	size_t iter2 = 100;
+	
+	unsigned long long  t1, t2, t3, t4;
+	for (int k = 0; k < iter; k++)
+	{
+		copy(file, file1);
+	    FILE *f = fopen(file, "r+");
+		if (f)
+		{
+			scan_to_file_words(f, param);
+			fclose(f);
+			//to_s(param->head, 0);
+			{
+				//t1 = tick();
+				f = fopen(file, "r+");
+				t1 = tick();
+				delete_by_first_letter(f, 'e');
+				t2 = tick();
+				fclose(f);
+				//t2 = tick();
+				
+				t3 = tick();
+				del_all_begin_letter(param, 'e');
+				t4 = tick();
+				if (t2 > t1)
+					t01 += t2 - t1;
+				else
+					iter1--;
+				if (t4 > t3)
+					t02 += t4 - t3;
+				else
+					iter2--;
+				//}
+			}
+		}
+		else
+			return;
+		free_tree(param);	
+	
+	}
+	
+	fprintf(stdout, " bytes    %10I64d   %10I64d\n", t01 / iter1, t02 / iter1);
+}			
+
+void comparison()
+{
+	printf("\n\nDELETING\n");
+	printf("                 file         tree\n");
+	printf("0001");
+	comp("lev1.txt", "lev11.txt", "lev12.txt");
+	printf("0280");
+	comp("lev2.txt", "lev21.txt", "lev22.txt");
+	printf("0760");
+	comp("lev3.txt", "lev31.txt", "lev32.txt");
+	printf("1600");
+	comp("lev4.txt", "lev41.txt", "lev42.txt");
+	printf("2044");
+	comp("lev5.txt", "lev51.txt", "lev52.txt");
+}
+
+void apply_post(struct tree_node *root, void (*func)(struct tree_node*, void*), void *arg)
+{
+    if (root == NULL)
+        return;
+
+    // pre-order
+    //func(root, arg);
+    apply_post(root->child[0], func, arg);
+    // in-order
+    //func(root, arg);
+    apply_post(root->child[1], func, arg);
+    // post-order
+    func(root, arg);
+}
+
+// обход дерева инфиксно
+void apply_in(struct tree_node *root, void (*func)(struct tree_node*, void*), void *arg)
+{
+    if (root == NULL)
+        return;
+
+    // pre-order
+    //func(root, arg);
+    apply_in(root->child[0], func, arg);
+    // in-order
+    func(root, arg);
+    apply_in(root->child[1], func, arg);
+    // post-order
+    // func(root, arg);
+}
+
+// обход дерева префиксно
+void apply_pre(struct tree_node *root, void (*func)(struct tree_node*, void*), void *arg)
+{
+    if (root == NULL)
+        return;
+
+    // pre-order
+    func(root, arg);
+    apply_pre(root->child[0], func, arg);
+    // in-order
+    //func(root, arg);
+    apply_pre(root->child[1], func, arg);
+    // post-order
+    // func(root, arg);
+}
+
+void to_dot(struct tree_node *root, void *arg)
+{	
+	FILE *f = arg;
+
+    if (root->child[0])
+        fprintf(f, "%10s -- %10s [label=\"left\"];\n", root->name, root->child[0]->name);
+
+    if (root->child[1])
+        fprintf(f, "%10s -- %10s [label=\"right\"];\n", root->name, root->child[1]->name);
+}
+
+void export_to_dot(FILE *stream, struct tree_node *root)
+{
+    fprintf(stream, "\ngraph\n{\n");
+    apply_pre(root, to_dot, stream);
+    fprintf(stream, "}\n");
+}
+
+int main()
+{
+	int res = OK;
+	char choice[MAX_CHAR];
+	struct tree_node* curt;
+	
+	setbuf(stdout, NULL);
+	
+	struct param_balance *param = malloc(sizeof(struct param_balance));
+	if (param)
+	{
+		param->head = NULL;
+		param->count = 0;
+		FILE *in = fopen("in.txt", "r+");
+		if (in)
+		{
+			res = scan_to_file_words(in, param);
+			if (res == 0)
+			{
+				while (1)
+				{
+					printf("\n\nTREE \n\n");
+					to_s(param->head, 0);
+					printf("0 - exit\n");
+					printf("1 - add manual\n");
+					printf("2 - delete by letter in tree\n");
+					printf("3 - delete by letter in file\n");
+					printf("4 - find knot\n");
+					printf("5 - comparison\n");
+					printf("6 - export to graph picture\n");
+					printf("7 - infix postfix prefix obhod\n");
+					printf("Choice : ");
+					fgets(choice, MAX_CHAR, stdin);
+					if (strlen(choice) == 2)
+					{
+						if (choice[0] == '0')
+						{
+							// удалить дерево
+							free_tree(param);
+							break;
+						}
+						else if (choice[0] == '1')
+						{
+							// add
+							printf("add\n");
+							printf("input one word: ");
+							scanf("%s", choice); // пока что
+							fflush(stdin);
+							printf("OK\n");
+							if (!have_simple(param->head, choice))
+							{
+								curt = create_node(choice);
+								if (curt)
+									add_balance_tree(param, curt);
+								else
+								{
+									res = ERR_MEMORY;
+									free_tree(param);
+									break;
+								}
+							}
+							else
+								printf("this word is exist in tree\n");
+						
+						}
+						else if (choice[0] == '2')
+						{
+							// delete in tree
+							printf("del in tree\n");
+							printf("input letter to delete : ");
+							fgets(choice, MAX_CHAR, stdin);
+							if (strlen(choice) == 2)
+							{
+								del_all_begin_letter(param, choice[0]);
+							}
+							else
+								printf("uncorect letter\n");
+						}
+						else if (choice[0] == '3')
+						{
+							// delete in file
+							printf("del in file");
+							printf("input letter to delete : ");
+							fgets(choice, MAX_CHAR, stdin);
+							if (strlen(choice) == 2)
+							{
+								delete_by_first_letter(in, choice[0]);
+							}
+							else
+								printf("uncorect letter\n");
+						}
+						else if (choice[0] == '5')
+						{
+							// comparison
+							printf("compare\n");
+							comparison();
+						}
+						else if (choice[0] == '4')
+						{
+							printf("\ninput name of knot\n");
+							printf("input one word: ");
+							scanf("%s", choice); // пока что
+							fflush(stdin);
+							printf("OK\n");
+							if (!find_knot(param->head, choice))
+							{
+								printf("\nthere is no knot with this data\n\n");
+							}
+						}
+						else if (choice[0] == '6')
+						{
+							printf("export to graph\n");
+							FILE *fdot = fopen("dotfile.dot", "w");
+							if (fdot)
+							{
+								export_to_dot(fdot, param->head);
+								fclose(fdot);
+							}
+							else
+								printf("admin error\n");
+						}
+						else if (choice[0] == '7')
+						{
+							fprintf(stderr, "infix:\n\n");
+							apply_in(param->head, to_dot, stderr);
+							fprintf(stderr, "\npostfix\n\n");
+							apply_post(param->head, to_dot, stderr);
+							fprintf(stderr, "\nprefix\n\n");
+							apply_pre(param->head, to_dot, stderr);
+							printf("look stderr file\n");
+						}
+						else
+							printf("uncorrect input \nTry again\n");
+					}
+					else
+						printf("uncorrect input \nTry again\n");
+				}
+			}
+		}
+		else
+			res = ERR_FILE;
+		free(param);
+	}
+	else
+	{
+		res = ERR_MEMORY;
+	}
+	
+	if (res == ERR_MEMORY)
+		printf(" error malloc\n");
+	if (res == ERR_FILE)
+		printf("error of work with file\n");
+	
+	return 0;
+}

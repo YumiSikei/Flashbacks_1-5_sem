@@ -1,0 +1,24 @@
+
+digraph Dictionary 
+{
+ Christmas_2  ->   American_1  [label="left"];
+ Christmas_2  ->        Day_1  [label="right"];
+  American_1  ->  Christian_1  [label="right"];
+ Christian_1  ->     Christ_1  [label="left"];
+    Christ_1  ->      Child_1  [label="left"];
+       Day_1  ->         is_3  [label="right"];
+        is_3  ->   favorite_1  [label="left"];
+        is_3  ->        one_1  [label="right"];
+  favorite_1  ->         It_1  [label="left"];
+  favorite_1  ->   holidays_1  [label="right"];
+        It_1  ->   December_1  [label="left"];
+        It_1  -> celebrated_1  [label="right"];
+celebrated_1  ->          a_1  [label="left"];
+         a_1  ->      birth_1  [label="right"];
+  holidays_1  ->    holiday_1  [label="left"];
+       one_1  ->         of_2  [label="left"];
+       one_1  ->        the_3  [label="right"];
+        of_2  ->       most_1  [label="left"];
+        of_2  ->         on_1  [label="right"];
+      most_1  ->    marking_1  [label="left"];
+}

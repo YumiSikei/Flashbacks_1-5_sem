@@ -1,0 +1,15 @@
+
+graph
+{
+   corobka --       fish [label="left"];
+   corobka --     nastya [label="right"];
+      fish --     gamora [label="left"];
+      fish --      sizif [label="right"];
+    gamora --  anastasya [label="left"];
+    gamora --        ert [label="right"];
+     sizif --  aanastasy [label="left"];
+    nastya --       ivan [label="left"];
+    nastya --      artem [label="right"];
+      ivan --  anasasyat [label="left"];
+     artem --      harry [label="left"];
+}

@@ -1,0 +1,24 @@
+
+graph
+{
+        is --         It [label="left"];
+        is --         of [label="right"];
+        It --  Christian [label="left"];
+        It -- celebrated [label="right"];
+ Christian --      Child [label="left"];
+ Christian --        Day [label="right"];
+     Child --   American [label="left"];
+     Child --     Christ [label="right"];
+       Day --  Christmas [label="left"];
+       Day --   December [label="right"];
+celebrated --          a [label="left"];
+celebrated --    holiday [label="right"];
+         a --      birth [label="right"];
+   holiday --   favorite [label="left"];
+   holiday --   holidays [label="right"];
+        of --       most [label="left"];
+        of --        one [label="right"];
+      most --    marking [label="left"];
+       one --         on [label="left"];
+       one --        the [label="right"];
+}

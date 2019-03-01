@@ -1,0 +1,87 @@
+program MyDef;
+
+{$APPTYPE CONSOLE}
+
+const
+  N = 13;
+  M = 12;
+  L = 15;
+
+var
+  X: array [1..N,1..M] of integer;
+  Y: array [1..L] of integer;
+  i, j, k: integer;
+  max: integer;
+  str, col: integer;
+  size: integer;
+  flag: integer;
+
+begin
+  repeat
+    write('Введите количество строк матрицы X: '); // Ввод исходных данных
+    readln(str);
+    writeln;
+    write('Введите количество столбцов матрицы X: ');
+    readln(col);
+    writeln;
+    writeln('Введите матрицу X[',str,',',col,']: ');
+
+    for i := 1 to str do
+      begin
+        for j := 1 to col do
+          read(X[i,j]);
+        readln;
+      end;
+
+    writeln;
+    writeln('Введите размер массива Y: ');
+    readln(size);
+    writeln;
+    writeln('Введите массив Y[',size,']: ');
+
+    for i := 1 to size do
+      read(Y[i]);
+    readln;
+  until (N > 0)and(M > 0)and(L > 0)and(N < 14)and(M < 13)and(L < 16);
+
+  writeln;
+  writeln('Матрица X: '); // Вывод исходных данных
+  for i := 1 to str do
+    begin
+      writeln;
+      for j := 1 to col do
+        write(X[i,j],'  ');
+      writeln;
+    end;
+
+  writeln;
+  writeln;
+  writeln('Массив Y: ');
+  writeln;
+  for i := 1 to size do
+    write(Y[i],' ');
+  writeln;
+
+  max := -1;
+  for i := 1 to str do
+    for j := 1 to col do
+      begin
+        flag := 0;
+        for k := 1 to size do
+          if (X[i,j] = Y[k]) then
+            flag := flag + 1;
+        if (X[i,j] > max) and (flag = 0) then
+          max := X[i,j]
+      end;
+
+  writeln;
+  if max <> -1 then
+    begin
+      writeln('Максимальный элемент матрицы X');
+      writeln('который не входит в массив Y: ', max);
+    end
+  else
+    writeln('Таких элементов нет');
+
+  readln;
+end.

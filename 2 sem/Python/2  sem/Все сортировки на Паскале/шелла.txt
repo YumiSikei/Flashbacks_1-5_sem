@@ -1,0 +1,127 @@
+﻿// BaseType - любой перечисляемый тип 
+// typedef int BaseType - пример
+void ShellsSort(BaseType *A, unsigned N)
+{
+	unsigned i,j,k;
+	BaseType t;
+	for(k = N/2; k > 0; k /=2)
+        for(i = k; i < N; i++)
+        {
+            t = A[i];
+            for(j = i; j>=k; j-=k)
+            {
+                if(t < A[j-k])
+                    A[j] = A[j-k];
+                else
+                    break;
+            }
+            A[j] = t;
+        }
+}
+
+
+
+var
+  incr: array [0..23] of integer = (1, 4, 10, 23, 57, 145, 356, 911, 1968, 4711,
+  11969, 27901, 84801, 213331, 543749, 1355339, 3501671, 8810089, 21521774,
+  58548857, 157840433, 410151271, 1131376761, 2147483647);
+  
+type arInt = array of integer;
+procedure ShellSort(var Arr: arInt);
+  var
+     C: Boolean;
+     G: Integer;
+     I: Integer;
+     J: Integer;
+     Tmp: Integer;
+     len: Integer;
+     cur_inc: integer;
+begin
+  len := Length(Arr) - 1;
+  cur_inc := 0;
+  while 3 * incr[cur_inc + 1] <= Length(Arr) do
+    inc(cur_inc);
+  repeat
+    g := incr[cur_inc];
+    i := g;
+    repeat
+      j := i - g;
+      c := True;
+      repeat
+        if arr[j] >= arr[j + g] then
+          c := False
+        else
+        begin
+          Tmp := Arr[j];
+          Arr[j] := Arr[j+g];
+          Arr[j+g] := Tmp;
+        end;
+        dec(j, g);
+      until  not ((j >= 0) and C);
+      inc(i);
+    until  not (i <= len);
+    dec(cur_inc);
+  until  not (cur_inc <> -1);
+end;
+
+
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+function ShellSort($elements,$length) {
+     $k=0;
+     $gap[0] = (int) ($length / 2);
+  
+     while($gap[$k] > 1) {
+         $k++;
+         $gap[$k]= (int)($gap[$k-1] / 2);
+     }//end while
+  
+     for($i = 0; $i <= $k; $i++){
+         $step=$gap[$i];
+  
+         for($j = $step; $j < $length; $j++) {
+             $temp = $elements[$j];
+             $p = $j - $step;
+             while($p >= 0 && $temp < $elements[$p]) {
+                 $elements[$p + $step] = $elements[$p];
+                 $p= $p - $step;
+             }//end while
+             $elements[$p + $step] = $temp;
+         }//endfor j
+     }//endfor i
+  
+     return $elements;
+ }// end function
+  
+ // Exmaple
+ // $SortedElements=shellsort($UnsortedElements,length of list(an integer));
+ // e.g: $elements=shellsort($elements,10);
+ 

@@ -1,0 +1,70 @@
+Даниэлла@Daniella MSYS ~/work/iu7-software-engineering-labs-2017-yanovadaniella/lab_01
+$ git add iarray.py
+
+Даниэлла@Daniella MSYS ~/work/iu7-software-engineering-labs-2017-yanovadaniella/lab_01
+$ git status
+На ветке develop
+Ваша ветка отстает от «origin/develop» на 2 коммита и может быть перемотана вперед.
+  (используйте «git pull», чтобы обновить вашу локальную ветку)
+Изменения, которые будут включены в коммит:
+  (используйте «git reset HEAD <файл>…», чтобы убрать из индекса)
+
+        новый файл:    iarray.py
+        новый файл:    main.py
+
+Неотслеживаемые файлы:
+  (используйте «git add <файл>…», чтобы добавить в то, что будет включено в коммит)
+
+        __pycache__/
+
+
+Даниэлла@Daniella MSYS ~/work/iu7-software-engineering-labs-2017-yanovadaniella/lab_01
+$ git diff
+
+Даниэлла@Daniella MSYS ~/work/iu7-software-engineering-labs-2017-yanovadaniella/lab_01
+$ git status
+На ветке develop
+Ваша ветка отстает от «origin/develop» на 2 коммита и может быть перемотана вперед.
+  (используйте «git pull», чтобы обновить вашу локальную ветку)
+Изменения, которые будут включены в коммит:
+  (используйте «git reset HEAD <файл>…», чтобы убрать из индекса)
+
+        новый файл:    iarray.py
+        новый файл:    main.py
+
+Изменения, которые не в индексе для коммита:
+  (используйте «git add <файл>…», чтобы добавить файл в индекс)
+  (используйте «git checkout -- <файл>…», чтобы отменить изменения
+   в рабочем каталоге)
+
+        изменено:      main.py
+
+Неотслеживаемые файлы:
+  (используйте «git add <файл>…», чтобы добавить в то, что будет включено в коммит)
+
+        __pycache__/
+
+
+Даниэлла@Daniella MSYS ~/work/iu7-software-engineering-labs-2017-yanovadaniella/lab_01
+$ git diff
+diff --git a/lab_01/main.py b/lab_01/main.py
+index 31619bc..cd31548 100644
+--- a/lab_01/main.py
++++ b/lab_01/main.py
+@@ -1,6 +1,6 @@
+ from iarray import *
+
+-def test_2():
++def test():^M
+   arr = list()
+
+   arr.append(0)
+@@ -33,7 +33,7 @@ def main():
+   print("Result")
+   print_array(new_arr, new_n)
+
+-  arr, n = test_2()
++  arr, n = test()^M
+
+   print("Source")
+   print_array(arr, n)

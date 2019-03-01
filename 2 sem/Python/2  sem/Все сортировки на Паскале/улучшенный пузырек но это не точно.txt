@@ -1,0 +1,20 @@
+﻿type TArray: Array of Integer; //Параметры массива нужно определить до вызова процедуры
+
+procedure booblesort(var A: TArray; min, max: Integer);
+var i, tmp, n: Integer;
+Sort: Boolean;
+begin
+Sort:=True;
+n:=0;
+while Sort do
+  begin
+   Sort:=False;
+   for i:=min to max-1-n do
+     if A[i]>A[i+1] then
+       begin
+         Sort:=True;
+         tmp:=A[i]; A[i]:=A[i+1]; A[i+1]:=tmp;
+       end;
+   n:=n+1;
+  end;
+end;

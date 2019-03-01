@@ -1,0 +1,8 @@
+Dune 45 50000
+Asus 23 50000
+MacBook 40 59999
+intel 23 47999
+hp 34 49999
+Dune 45 59999
+hp 23 47999
+MacBook 45 51000

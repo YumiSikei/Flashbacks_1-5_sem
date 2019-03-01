@@ -1,0 +1,42 @@
+;—оставить подпрограмму с именем SetCler типа
+;   Procedure (var S:LONGWORD; L:LONGWORD; N:LONGWORD; P:LONGWORD)
+;выполн¤ющую установку разр¤да N битовой строки S
+;в ноль, если P=0, в единицу,если P не равен 0.
+
+.386 
+.model FLAT,C 
+PUBLIC SetCler
+
+.CODE
+SetCler PROC
+  PUSH EBP
+  MOV EBP,ESP                 
+
+  S EQU DWORD PTR[EBP+8]         ;наша строка
+  L EQU DWORD PTR[EBP+12]        ;длина строки
+  N EQU DWORD PTR[EBP+16]        ;номер разр¤да
+  P EQU DWORD PTR[EBP+20]        ;параметр
+  
+  MOV ECX,N ; ѕостараемс¤ не пользоватьс¤ ESI и EDI                  
+  MOV EBX,S   
+  
+  ; ѕочему то проверка на 32-и битность убрана, но она нужна
+  CMP ECX,32
+  JNA M0  ; ?сли номер разр¤да меньше или равен 32, то в ћ0
+  
+  SUB ECX,32 ; »наче номер разр¤да -= 32;
+  ADD EBX,4 ; смещаем адрес строки на 4 байта вправо(как раз уйдет 32 бита)
+
+M0:
+  CMP P,0                       ;сравниваем режим с нулем
+  JE M1                         ;если равно, то переходим на метку M1
+  BTS [EBX], ECX                ;установка бита в 1
+  JMP M2
+M1:
+  BTR [EBX], ECX                ;установка бита в 0
+
+M2:
+  POP EBP
+  RET
+SetCler ENDP
+END

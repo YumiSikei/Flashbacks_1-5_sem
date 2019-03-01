@@ -1,0 +1,130 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:41:20
+                                                             Page     1-1
+
+
+				
+ 0000				P0SEG          SEGMENT  PARA  'DATA'
+ 0000  30 2E 20 73 68 6F	     Y         db  '0. show menu '
+       77 20 6D 65 6E 75	
+       20			
+ 000D  0A 0D			               db  10, 13
+ 000F  31 2E 20 69 6E 70	               db  '1. input int  to word X'
+       75 74 20 69 6E 74	
+       20 20 74 6F 20 77	
+       6F 72 64 20 58		
+ 0026  0A 0D			               db  10, 13
+ 0028  32 2E 6F 75 74 70	               db   '2.output from X as binary 
+				unsigned'
+       75 74 20 66 72 6F	
+       6D 20 58 20 61 73	
+       20 62 69 6E 61 72	
+       79 20 75 6E 73 69	
+       67 6E 65 64		
+ 004A  0A 0D			               db  10, 13
+ 004C  33 2E 20 6F 75 74	               db   '3. output from X as binary
+				 signed'
+       70 75 74 20 66 72	
+       6F 6D 20 58 20 61	
+       73 20 62 69 6E 61	
+       72 79 20 73 69 67	
+       6E 65 64			
+ 006D  0A 0D			               db  10, 13
+ 006F  34 2E 6F 75 74 70	               db    '4.output from X as decima
+				l unsigned'
+       75 74 20 66 72 6F	
+       6D 20 58 20 61 73	
+       20 64 65 63 69 6D	
+       61 6C 20 75 6E 73	
+       69 67 6E 65 64		
+ 0092  0A 0D			               db  10, 13
+ 0094  35 2E 20 6F 75 74	               db  '5. output from X as decimal
+				 signed'
+       70 75 74 20 66 72	
+       6F 6D 20 58 20 61	
+       73 20 64 65 63 69	
+       6D 61 6C 20 73 69	
+       67 6E 65 64		
+ 00B6  0A 0D			               db  10, 13
+ 00B8  36 2E 20 6F 75 74	               db  '6. output from X as hexadec
+				imal unsigned'
+       70 75 74 20 66 72	
+       6F 6D 20 58 20 61	
+       73 20 68 65 78 61	
+       64 65 63 69 6D 61	
+       6C 20 75 6E 73 69	
+       67 6E 65 64		
+ 00E0  0A 0D			               db  10, 13
+ 00E2  37 2E 20 6F 75 74	               db  '7. output from X as hexadec
+				imal signed'
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:41:20
+                                                             Page     1-2
+
+
+       70 75 74 20 66 72	
+       6F 6D 20 58 20 61	
+       73 20 68 65 78 61	
+       64 65 63 69 6D 61	
+       6C 20 73 69 67 6E	
+       65 64			
+ 0108  0A 0D			               db  10, 13
+ 010A  38 2E 20 6F 75 74	               db  '8. out from program'
+       20 66 72 6F 6D 20	
+       70 72 6F 67 72 61	
+       6D			
+ 011D  0A 0D			               db  10, 13
+ 011F  24			               db '$'
+ 0120				P0SEG          ENDS
+				
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:41:20
+                                                             Page     1-3
+
+
+				PAGE
+ 0000				     CSEG      SEGMENT PARA PUBLIC 'CODE'
+				               ASSUME CS:CSEG, ds:P0SEG
+				
+						PUBLIC p0
+ 0000				p0 PROC NEAR
+				
+ 0000  B8 ---- R		               mov ax, P0SEG
+ 0003  8E D8			               mov ds, ax
+				
+ 0005  BA 0000 R		               mov dx, offset Y
+ 0008  B4 09			               mov ah, 9
+ 000A  CD 21			               int 21h
+ 000C  C3				       ret
+ 000D				p0 ENDP
+ 000D				     CSEG      ENDS
+				               END  
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 10:41:20
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	000D	PARA	PUBLIC	'CODE'
+P0SEG  . . . . . . . . . . . . .  	0120	PARA	NONE	'DATA'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+P0 . . . . . . . . . . . . . . .  	N PROC	0000	CSEG	Global	Length = 000D
+
+Y  . . . . . . . . . . . . . . .  	L BYTE	0000	P0SEG
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  p0		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     40 Source  Lines
+     40 Total   Lines
+     15 Symbols
+
+  46690 + 444314 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

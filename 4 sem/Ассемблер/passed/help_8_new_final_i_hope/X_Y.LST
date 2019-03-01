@@ -1,0 +1,85 @@
+Turbo Assembler	 Version 5.3	    04-22-18 20:38:27	    Page 1
+X_Y.ASM
+
+
+
+      1					 ;—оставить подпрограмму с именем A_B типа
+      2					 ;   Procedure (var A: LONGWORD; const B:LONGWORD; L:LONGWORD)
+      3					 ;выполн€ющую вычитание	битовых	строк A:=A \ B длины L.
+      4
+      5					 .386
+      6	00000000			 .model	FLAT,PASCAL
+      7					 PUBLIC	A_B
+      8
+      9	00000000			 .CODE
+     10	00000000			 A_B PROC
+     11		  = DWORD PTR[EBP+16]	 A EQU DWORD PTR[EBP+16]	   ;перва€ строка
+     12		  = DWORD PTR[EBP+12]	 B EQU DWORD PTR[EBP+12]	   ;втроа€ строка
+     13		  = DWORD PTR[EBP+8]	 LAB EQU DWORD PTR[EBP+8]	   ;длина строк
+     14
+     15	00000000  55			   PUSH	EBP			   ;пишем старый адрес EBP
+     16	00000001  8B EC			   MOV EBP,ESP			   ;пишем в EBP	текущее	значение ESP
+     17
+     18	00000003  56			   PUSH	ESI			   ;сохран€ем регистры
+     19	00000004  57			   PUSH	EDI
+     20
+     21	00000005  8B 4D	08		   MOV ECX,LAB			   ;CX = l
+     22	00000008  C1 E9	05		   SHR ECX,5			   ;сдвигаем на	5 разр€дов вправо
+     23	0000000B  8B 7D	10		   MOV EDI,A
+     24	0000000E  8B 75	0C		   MOV ESI,B
+     25
+     26	00000011  41			   INC ECX			   ;»нкрементируем ECX,	чтобы цикл снизу выполнилс€ 2 раза
+     27
+     28	00000012			 M1:
+     29	00000012  8B 06			   MOV EAX,[ESI]
+     30	00000014  F7 D0			   NOT EAX			   ;отрицаем содержимое	EAX, это перва€	часть B
+     31	00000016  21 07			   AND [EDI],EAX		   ;объедин€ем
+     32	00000018  83 C7	04		   ADD EDI,4			   ;сдвигаем указатели строк на	4
+     33	0000001B  83 C6	04		   ADD ESI,4
+     34	0000001E  E2 F2			   LOOP	M1			   ;возврат на исходную! (мы гоним этот	цикл 2 раза,
+     35									   ;уменьша€ ECX. ѕосле	равенства его нулю мы идем дальше)
+     36
+     37
+     38	00000020  5F			   POP EDI
+     39	00000021  5E			   POP ESI
+     40	00000022  5D			   POP EBP
+     41	00000023  C2 000C		   RET 12
+     42	00000026			 A_B ENDP
+     43					 END
+Turbo Assembler	 Version 5.3	    04-22-18 20:38:27	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "04-22-18"
+??FILENAME			  Text	 "X_Y	  "
+??TIME				  Text	 "20:38:27"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 X_Y
+@INTERFACE			  Text	 004H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+A				  Text	 DWORD PTR[EBP+16]
+A_B				  Near32 FLAT:0000
+B				  Text	 DWORD PTR[EBP+12]
+LAB				  Text	 DWORD PTR[EBP+8]
+M1				  Near32 FLAT:0012
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0000 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  0026 Dword  Public  CODE
+

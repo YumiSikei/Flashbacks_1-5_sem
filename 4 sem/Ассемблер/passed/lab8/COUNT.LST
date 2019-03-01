@@ -1,0 +1,75 @@
+Turbo Assembler	 Version 5.3	    04-22-18 23:04:28	    Page 1
+COUNT.ASM
+
+
+
+      1					 ;Составить подпрограмму с именем Count	типа
+      2					 ;	function (const	S: LONGWORD; L:LONGWORD)
+      3					 ;возвращающую число единиц битовой строки S длины L.
+      4
+      5					 .386
+      6	00000000			 .model	FLAT,PASCAL
+      7					 PUBLIC	COUNT
+      8
+      9	00000000			 .CODE
+     10	00000000			 COUNT PROC
+     11	00000000  55			   PUSH	EBP		       ;пишем старый адрес EBP
+     12	00000001  8B EC			   MOV EBP,ESP		       ;пишем в	EBP текущее значение ESP
+     13
+     14		  = DWORD PTR[EBP+12]	 A EQU DWORD PTR[EBP+12]       ;наша строка
+     15		  = DWORD PTR[EBP+8]	 L EQU DWORD PTR[EBP+8]	       ;длина строки
+     16
+     17	00000003  B8 00000000		   MOV EAX,0		       ;результат
+     18	00000008  8B 5D	0C		   MOV EBX,A		       ;пишем адрес строки
+     19	0000000B  8B 4D	08		   MOV ECX,L		       ;длина строки
+     20	0000000E  BE 00000000		   MOV ESI,0		       ;индекс
+     21
+     22	00000013			 COUNT_FOR:
+     23					 ;Команда BT сохраняет значение	одного бита из первого операнда	во флаге CF.
+     24					 ;Позиция сохраняемого бита из первого операнда	находится во втором операнде.
+     25
+     26	00000013  0F A3	33		   BT [EBX], ESI	       ;получает значение ESI-бита из строки EBX во флаг CF
+     27	00000016  83 D0	00		   ADC EAX, 0		       ;EAX + 0	+ CF
+     28	00000019  46			   INC ESI		       ;ESI++
+     29	0000001A  E2 F7			   LOOP	COUNT_FOR	       ;переход	к метке	COUNT_FOR, пока	CX > 0
+     30
+     31	0000001C  5D			   POP EBP		       ;восстанавливаем	регистры
+     32	0000001D  C2 0008		   RET 8
+     33	00000020			 COUNT ENDP
+     34					 END
+Turbo Assembler	 Version 5.3	    04-22-18 23:04:28	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "04-22-18"
+??FILENAME			  Text	 "COUNT	  "
+??TIME				  Text	 "23:04:28"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 COUNT
+@INTERFACE			  Text	 004H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+A				  Text	 DWORD PTR[EBP+12]
+COUNT				  Near32 FLAT:0000
+COUNT_FOR			  Near32 FLAT:0013
+L				  Text	 DWORD PTR[EBP+8]
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0000 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  0020 Dword  Public  CODE
+

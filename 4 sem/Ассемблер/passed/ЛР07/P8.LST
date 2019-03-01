@@ -1,0 +1,46 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 11:26:56
+                                                             Page     1-1
+
+
+				PAGE
+ 0000				     CSEG      SEGMENT PARA PUBLIC 'CODE'
+				               ASSUME CS:CSEG
+						PUBLIC p8
+ 0000				p8 PROC NEAR
+				               EXTRN end_p: near
+ 0000  E9 0000 E		               jmp end_p
+ 0003  C3				       ret
+ 0004				p8 ENDP
+ 0004				     CSEG      ENDS
+				               END  
+Microsoft (R) Macro Assembler Version 5.10                  4/16/18 11:26:56
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	0004	PARA	PUBLIC	'CODE'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+END_P  . . . . . . . . . . . . .  	L NEAR	0000	CSEG	External
+
+P8 . . . . . . . . . . . . . . .  	N PROC	0000	CSEG	Global	Length = 0004
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  p8		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     11 Source  Lines
+     11 Total   Lines
+     13 Symbols
+
+  46768 + 446284 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

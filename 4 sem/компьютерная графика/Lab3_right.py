@@ -1,0 +1,664 @@
+from tkinter import *
+from tkinter import messagebox
+from math import fabs, ceil, radians, cos, sin
+import matplotlib.pyplot as plt
+import time
+
+# Знак числа 
+def sign(x):
+    if x < 0:
+        return -1
+    elif x > 0:
+        return 1
+    return 0
+
+# ЦДА
+def cda_test(ps, pf, fill):
+    dx = abs(pf[0] - ps[0])
+    dy = abs(pf[1] - ps[1])
+    if dx > dy:
+        L = dx
+    else:
+        L = dy
+    sx = (pf[0] - ps[0]) / L
+    sy = (pf[1] - ps[1]) / L
+    x = ps[0]; y = ps[1]
+    stairs = []; st = 1
+    while abs(x - pf[0]) > 1 or abs(y - pf[1]) > 1:
+        x += sx
+        y += sy
+
+def draw_line_cda(ps, pf, fill):
+    dx = abs(pf[0] - ps[0])
+    dy = abs(pf[1] - ps[1])
+    if dx:
+        tg = dy / dx
+    else:
+        tg = 0
+    if dx > dy:
+        L = dx
+    else:
+        L = dy
+    sx = (pf[0] - ps[0]) / L
+    sy = (pf[1] - ps[1]) / L
+    x = ps[0]; y = ps[1]
+    stairs = []; st = 1
+    while abs(x - pf[0]) > 1 or abs(y - pf[1]) > 1:
+        canvas.create_line(x, y, x + 1, y + 1, fill=fill)
+        if (abs(int(x) - int(x + sx)) >= 1 and tg > 1) or (abs(int(y) - int(y + sy)) >= 1 and tg <= 1):
+            stairs.append(st)
+            st = 0
+        else:
+            st += 1
+        x += sx
+        y += sy
+    if st:
+        stairs.append(st)
+    return stairs
+
+# БР вещественный
+def float_test(ps, pf, fill):
+    dx = pf[0] - ps[0]
+    dy = pf[1] - ps[1]
+    sx = sign(dx)
+    sy = sign(dy)
+    dy = abs(dy)
+    dx = abs(dx)
+    if dy >= dx:
+        dx, dy = dy, dx
+        pr = 1
+    else:
+        pr = 0
+    m = dy / dx
+    e = m - 1 / 2
+    x = ps[0]; y = ps[1]
+    while x != pf[0] or y != pf[1]:
+        if e >= 0:
+            if pr == 1:
+                x += sx
+            else:
+                y += sy
+            e -= 1
+        if e <= 0:
+            if pr == 0:
+                x += sx
+            else:
+                y += sy
+        e += m
+
+def draw_line_brez_float(ps, pf, fill):
+    dx = pf[0] - ps[0]
+    dy = pf[1] - ps[1]
+    sx = sign(dx)
+    sy = sign(dy)
+    dy = abs(dy)
+    dx = abs(dx)
+    if dy >= dx:
+        dx, dy = dy, dx
+        pr = 1
+    else:
+        pr = 0
+    m = dy / dx
+    e = m - 1 / 2
+    x = ps[0]; y = ps[1]
+    stairs = []; st = 1
+    while x != pf[0] or y != pf[1]:
+        canvas.create_line(x, y, x + 1, y + 1, fill=fill)
+        
+        if e >= 0:
+            if pr == 1:
+                x += sx
+            else:
+                y += sy
+            e -= 1
+            stairs.append(st)
+            st = 0
+        if e <= 0:
+            if pr == 0:
+                x += sx
+            else:
+                y += sy
+            st += 1
+        e += m
+            
+    if st:
+        stairs.append(st)
+    return stairs
+
+# БР целый 
+def int_test(ps, pf, fill):
+    dx = pf[0] - ps[0]
+    dy = pf[1] - ps[1]
+    sx = sign(dx)
+    sy = sign(dy)
+    dy = abs(dy)
+    dx = abs(dx)
+    if dy >= dx:
+        dx, dy = dy, dx
+        pr = 1
+    else:
+        pr = 0
+    m = 2 * dy
+    e = m - dx; ed = 2 * dx
+    x = ps[0]; y = ps[1]
+    while x != pf[0] or y != pf[1]:
+        if e >= 0:
+            if pr == 1:
+                x += sx
+            else:
+                y += sy
+            e -= ed
+        if e <= 0:
+            if pr == 0:
+                x += sx
+            else:
+                y += sy
+        e += m
+
+def draw_line_brez_int(ps, pf, fill):
+    dx = pf[0] - ps[0]
+    dy = pf[1] - ps[1]
+    sx = sign(dx)
+    sy = sign(dy)
+    dy = abs(dy)
+    dx = abs(dx)
+    if dy >= dx:
+        dx, dy = dy, dx
+        pr = 1
+    else:
+        pr = 0
+    m = 2 * dy
+    e = m - dx; ed = 2 * dx
+    x = ps[0]; y = ps[1]
+    stairs = []; st = 1
+    while x != pf[0] or y != pf[1]:
+        canvas.create_line(x, y, x + 1, y + 1, fill=fill)
+        if e >= 0:
+            if pr == 1:
+                x += sx
+            else:
+                y += sy
+            stairs.append(st)
+            st = 0
+            e -= ed
+        if e <= 0:
+            if pr == 0:
+                x += sx
+            else:
+                y += sy
+            st += 1
+        e += m
+            
+    if st:
+        stairs.append(st)
+    return stairs
+
+# БР с сгл
+def smoth_test(ps, pf, fill):
+    L = 100
+    dx = pf[0] - ps[0]
+    dy = pf[1] - ps[1]
+    sx = sign(dx)
+    sy = sign(dy)
+    dy = abs(dy)
+    dx = abs(dx)
+    if dy >= dx:
+        dx, dy = dy, dx
+        pr = 1
+    else:
+        pr = 0
+    m = dy / dx * L
+    e = L / 2
+    w = L - m
+    x = ps[0]; y = ps[1]
+    while x != pf[0] or y != pf[1]:
+        if e < w:
+            if pr == 0:
+                x += sx
+            else:
+                y += sy
+            e += m
+        elif e >= w:
+            x += sx
+            y += sy
+            e -= w
+            
+def draw_line_brez_smoth(ps, pf, fill):
+    L = 100
+    fill = range_color(fill, L)
+    dx = pf[0] - ps[0]
+    dy = pf[1] - ps[1]
+    sx = sign(dx)
+    sy = sign(dy)
+    dy = abs(dy)
+    dx = abs(dx)
+    if dy >= dx:
+        dx, dy = dy, dx
+        pr = 1
+    else:
+        pr = 0
+    m = dy / dx * L
+    e = L / 2
+    w = L - m
+    x = ps[0]; y = ps[1]
+    stairs = []; st = 1
+    while x != pf[0] or y != pf[1]:
+        canvas.create_line(x, y, x + 1, y + 1, fill=fill[round(e) - 1])
+        if e < w:
+            if pr == 0:
+                x += sx
+            else:
+                y += sy
+            st += 1
+            e += m
+        elif e >= w:
+            x += sx
+            y += sy
+            e -= w
+            stairs.append(st)
+            st = 0
+    if st:
+        stairs.append(st)
+    return stairs
+
+
+# Массив цветов одного оттенка разной интенсивности
+def range_color(color, intense):
+    grad = []
+    (r1,g1,b1) = canvas.winfo_rgb(color)
+    (r2,g2,b2) = canvas.winfo_rgb(bgcolor)
+    r_ratio = float(r2-r1) / intense 
+    g_ratio = float(g2-g1) / intense
+    b_ratio = float(b2-b1) / intense
+
+    for i in range(intense):
+        nr = int(r1 + (r_ratio * i))
+        ng = int(g1 + (g_ratio * i))
+        nb = int(b1 + (b_ratio * i))
+        grad.append("#%4.4x%4.4x%4.4x" % (nr,ng,nb))
+    grad.reverse()
+    return grad
+
+
+# Получение параметров для отрисовки
+def draw(test_mode):
+    ind = method_list.curselection()
+    if len(ind) == 1:
+        xs, ys = fxs.get(), fys.get()
+        xf, yf = fxf.get(), fyf.get()
+        if not xs and not ys:
+            messagebox.showwarning('Предупреждение',
+                                   'Не заданы координаты начала отрезка!')
+        elif not xs or not ys:
+            messagebox.showwarning('Предупреждение',
+                                   'Не задана одна из координат начала отрезка!')
+        elif not xf and not yf:
+            messagebox.showwarning('Предупреждение',
+                                   'Не заданы координаты конца отрезка!')
+        elif not xf or not yf:
+            messagebox.showwarning('Предупреждение',
+                                   'Не задана одна из координат конца отрезка!')
+        else:
+            try:
+                xs, ys = round(float(xs)), round(float(ys))
+                xf, yf = round(float(xf)), round(float(yf))
+                if xs != xf or ys != yf:
+                    xs += center[0]; xf += center[0]
+                    ys = center[1] - ys; yf = center[1] - yf
+                    if not test_mode:
+                        funcs[ind[0]]([xs, ys], [xf, yf], fill=linecolor)
+                    else:
+                        angle = fangle.get()
+                        if angle:
+                            try:
+                                angle = float(angle)
+                                if angle:
+                                    test(funcs[ind[0]], angle, [xs, ys], [xf, yf])
+                                else:
+                                    messagebox.showwarning('Предупреждение',
+                                                           'Задано нулевое значение для шага анализа!')
+                            except:
+                                messagebox.showwarning('Предупреждение',
+                                                       'Введено нечисловое значение для шага анализа!')
+                        else:
+                            messagebox.showwarning('Предупреждение',
+                                                   'Не задано значение для шага анализа!')
+                else:
+                    messagebox.showwarning('Предупреждение',
+                                           'Начало и конец отрезка совпадают!')
+            except:
+                messagebox.showwarning('Предупреждение',
+                                       'Нечисловое значение для параметров отрезка!')
+            
+    elif not len(ind):
+        messagebox.showwarning('Предупреждение',
+                               'Не выбран метод построения отрезка!')
+    else:
+        messagebox.showwarning('Предупреждение',
+                               'Выбрано более одного метода простроения отрезка!')
+
+
+# Получение параметров для анализа
+def analize(mode):
+    try:
+        length = fline.get()
+        if length: length = int(length)
+        else: length = 200
+        if not mode: time_bar(length)
+        else:
+            ind = method_list.curselection()
+            if ind:
+                if ind[-1] != 4:
+                    smoth_analize(ind, length)
+                else:
+                    messagebox.showwarning('Предупреждение',
+                               'Стандартный метод не может '
+                               'быть проанализирован на ступенчатость!')
+            else:
+                messagebox.showwarning('Предупреждение',
+                                       'Не выбрано ни одного'
+                                       'метода построения отрезка!')
+    except:
+        messagebox.showwarning('Предупреждение',
+                               'Введено нечисловое значение для длины отрезка!')
+        
+# замер времени
+def test(method, angle, pb, pe):
+    total = 0
+    steps = int(360 // angle)
+    for i in range(steps):
+        cur1 = time.time()
+        method(pb, pe, fill=linecolor)
+        cur2 = time.time()
+        turn_point(radians(angle), pe, pb)
+        total += cur2 - cur1
+    return total / steps
+            
+
+# гистограмма времени
+def time_bar(length):
+    close_plt()
+    plt.figure(2, figsize=(9, 7))
+    times = []
+    angle = 1
+    pb = [center[0], center[1]]; pe = [center[0] + length, center[1]]
+    for i in range(4):
+        times.append(test(test_funcs[i], angle, pb, pe))
+    clean()
+    Y = range(len(times))
+    L = ('Digital\ndifferential\nanalyzer', 'Bresenham\n(real coeffs)',
+         'Bresenham\n(int coeffs)', 'Bresenham\n(smooth)')
+    plt.bar(Y, times, align='center')
+    plt.xticks(Y, L)
+    plt.ylabel("Work time in sec. (line len. "+str(length)+")")
+    plt.show()
+
+# Поворот точки для сравнения ступ
+def turn_point(angle, p, center):
+    x = p[0]
+    p[0] = round(center[0] + (x - center[0]) * cos(angle) + (p[1] - center[1]) * sin(angle))
+    p[1] = round(center[1] - (x - center[0]) * sin(angle) + (p[1] - center[1]) * cos(angle))
+    
+# Анализ ступечатости
+def smoth_analize(methods, length):
+    close_plt()
+    names = ('Digital\ndifferential\nanalyzer', 'Bresenham\n(real coeffs)',
+         'Bresenham\n(int coeffs)', 'Bresenham\n(smooth)')
+    plt.figure(1)
+    plt.title("Stepping analysis")
+    plt.xlabel("Angle")
+    plt.ylabel("Number of steps(line length "+str(length)+")")
+    plt.grid(True)
+    plt.legend(loc='best')
+
+    for i in methods:
+        max_len = []; nums = []; angles = []
+        angle = 0; step = 2
+        pb = [center[0], center[1]]; pe = [center[0] + length, center[1]]
+        
+        for j in range(90 // step):
+            stairs = funcs[i](pb, pe, linecolor)
+            turn_point(radians(step), pe, pb)
+            if stairs: max_len.append(max(stairs))
+            else: max_len.append(0)
+            nums.append(len(stairs))
+            angles.append(angle)
+            angle += step
+        clean()
+        plt.figure(1)
+        plt.plot(angles, nums, label=names[i])
+        plt.legend()
+    plt.show()
+
+
+# Оси координат
+def draw_axis():
+    color = 'grey71'
+    canvas.create_line(0, center[1], 2 * center[0], center[1], fill=color, arrow=LAST)
+    canvas.create_line(center[0], 0, center[0], 2 * center[1], fill=color, arrow=FIRST)
+    canvas.create_text(center[0] - 10, 10, text="Y", fill=color)
+    canvas.create_text(center[0] + 17, 10, text="400", fill=color)
+    canvas.create_text(2 * center[0] - 15, center[1] - 10, text="X", fill=color)
+    canvas.create_text(2 * center[0] - 15, center[1] + 10, text="750", fill=color)
+    
+
+# очистка канваса
+def clean():
+    canvas.delete("all")
+    draw_axis()
+
+# Справка
+def show_info():
+    messagebox.showinfo('Справка',
+                           'Программа позволяет строить отрезки с использованием пяти различных методов:\n'
+                           ' - метод цифрового дифференциального анализатора;\n'
+                           ' - метод Брезенхема с действитльными коэфициентами;\n'
+                           ' - метод Брезенхема с целыми коэфициентами;\n'
+                           ' - метод Брезенхема со сглаживанием;\n'
+                           ' - стандартый метод.\n'
+                           '\nДля построения отрезка необходимо задать его начало\n'
+                           'и конец и выбрать метод построения.\n'
+                           '\nДля визуального анализа необходимо задать начало и конец,\n'
+                           'выбрать метод для анализа а также угол поворота отрезка на каждом шаге анализа.\n'
+                           '\nДля анализа ступенчатости можно выбрать сразу несколько методов.\n')
+
+    
+
+
+def fill_list(lst):
+    lst.insert(END, "Цифровой дифференциальный анализатор")
+    lst.insert(END, "Брезенхем (действительный)")
+    lst.insert(END, "Брезенхем (целый)")
+    lst.insert(END, "Брезенхем с устранением ступенчатости")
+    lst.insert(END, "Стандартный")
+
+def set_bgcolor(color):
+    global bgcolor
+    bgcolor = color
+    canvas.configure(bg=bgcolor)
+
+def set_linecolor(color):
+    global linecolor
+    linecolor = color
+    lb_lcolor.configure(bg=linecolor)
+
+def close_plt():
+    plt.figure(1)
+    plt.close()
+    plt.figure(2)
+    plt.close()
+    
+def close_all():
+    close_plt()
+    window.destroy()
+    
+
+
+
+window = Tk()
+window.geometry('1500x1000')
+window.resizable(0, 0)
+window.title('Лабораторная работа №3')
+color1 = "#ffffcf"
+color2 = "#cfffff"
+color3 = "#ffcfff"
+color4 = "#dfffdf"
+color5 = "#ffdfdf"
+
+mainFrame1 = Frame(window, bg=color1, height=200, width=300)
+mainFrame1.place(x=300, y=800)
+
+mainFrame2 = Frame(window, bg=color2, height=200, width=300)
+mainFrame2.place(x=0, y=800)
+
+mainFrame3 = Frame(window, bg=color3, height=200, width=300)
+mainFrame3.place(x=600, y=800)
+
+mainFrame4 = Frame(window, bg=color4, height=200, width=300)
+mainFrame4.place(x=900, y=800)
+
+mainFrame5 = Frame(window, bg=color5, height=200, width=300)
+mainFrame5.place(x=1200, y=800)
+
+canv = Canvas(window, width=1500, height=800, bg='white')
+canvas = canv
+canvas_test = canv
+canv.place(x=0, y=0)
+center = (750, 400)
+
+#Список Алгаритмов
+method_list = Listbox(mainFrame1, selectmode=EXTENDED)
+fill_list(method_list)
+method_list.place(x=10, y=10, width=280, height=85)
+funcs = (draw_line_cda, draw_line_brez_float, draw_line_brez_int,
+         draw_line_brez_smoth, canvas.create_line)
+test_funcs = (cda_test, float_test, int_test,
+         smoth_test)
+
+# выбор цветов
+
+linecolor = 'black'
+bgcolor = 'white'
+
+wbtn_line = Button(mainFrame2, bg="white", activebackground="white",
+                   command=lambda: set_linecolor('white'))
+kbtn_line = Button(mainFrame2, bg="black", activebackground="black",
+                   command=lambda: set_linecolor("black"))
+rbtn_line = Button(mainFrame2, bg="red", activebackground="red",
+                   command=lambda: set_linecolor("red"))
+obtn_line = Button(mainFrame2, bg="orange", activebackground="orange",
+                   command=lambda: set_linecolor("orange"))
+ybtn_line = Button(mainFrame2, bg="yellow", activebackground="yellow",
+                   command=lambda: set_linecolor("yellow"))
+gbtn_line = Button(mainFrame2, bg="green", activebackground="green",
+                   command=lambda: set_linecolor("green"))
+dbtn_line = Button(mainFrame2, bg="DodgerBlue", activebackground="DodgerBlue",
+                   command=lambda: set_linecolor("DodgerBlue"))
+bbtn_line = Button(mainFrame2, bg="blue", activebackground="blue",
+                   command=lambda: set_linecolor("blue"))
+pbtn_line = Button(mainFrame2, bg="purple", activebackground="purple",
+                   command=lambda: set_linecolor("purple"))
+
+wbtn_bg = Button(mainFrame2, bg="white", activebackground="white",
+                 command=lambda: set_bgcolor("white"))
+kbtn_bg = Button(mainFrame2, bg="black", activebackground="black",
+                 command=lambda: set_bgcolor("black"))
+rbtn_bg = Button(mainFrame2, bg="red", activebackground="red",
+                 command=lambda: set_bgcolor("red"))
+obtn_bg = Button(mainFrame2, bg="orange", activebackground="orange",
+                 command=lambda: set_bgcolor("orange"))
+ybtn_bg = Button(mainFrame2, bg="yellow", activebackground="yellow",
+                 command=lambda: set_bgcolor("yellow"))
+gbtn_bg = Button(mainFrame2, bg="green", activebackground="green",
+                 command=lambda: set_bgcolor("green"))
+dbtn_bg = Button(mainFrame2, bg="DodgerBlue", activebackground="DodgerBlue",
+                 command=lambda: set_bgcolor("DodgerBlue"))
+bbtn_bg = Button(mainFrame2, bg="blue", activebackground="blue",
+                 command=lambda: set_bgcolor("blue"))
+pbtn_bg = Button(mainFrame2, bg="purple", activebackground="purple",
+                 command=lambda: set_bgcolor("purple"))
+
+wbtn_line.place(x=15, y=50, height=30, width=30)
+kbtn_line.place(x=45, y=50, height=30, width=30)
+rbtn_line.place(x=75, y=50, height=30, width=30)
+obtn_line.place(x=105, y=50, height=30, width=30)
+ybtn_line.place(x=135, y=50, height=30, width=30)
+gbtn_line.place(x=165, y=50, height=30, width=30)
+dbtn_line.place(x=195, y=50, height=30, width=30)
+bbtn_line.place(x=225, y=50, height=30, width=30)
+pbtn_line.place(x=255, y=50, height=30, width=30)
+
+wbtn_bg.place(x=15, y=120, height=30, width=30)
+kbtn_bg.place(x=45, y=120, height=30, width=30)
+rbtn_bg.place(x=75, y=120, height=30, width=30)
+obtn_bg.place(x=105, y=120, height=30, width=30)
+ybtn_bg.place(x=135, y=120, height=30, width=30)
+gbtn_bg.place(x=165, y=120, height=30, width=30)
+dbtn_bg.place(x=195, y=120, height=30, width=30)
+bbtn_bg.place(x=225, y=120, height=30, width=30)
+pbtn_bg.place(x=255, y=120, height=30, width=30)
+
+
+
+lb1 = Label(mainFrame1, bg=color1, text='Начало линии:')
+lb2 = Label(mainFrame1, bg=color1, text='Конец линии:')
+lb1.place(x=10, y=95)
+lb2.place(x=10, y=115)
+
+lbx1 = Label(mainFrame1, bg=color1, text='X:')
+lby1 = Label(mainFrame1, bg=color1, text='Y:')
+lbx2 = Label(mainFrame1, bg=color1, text='X:')
+lby2 = Label(mainFrame1, bg=color1, text='Y:')
+lbx1.place(x=125, y=95)
+lby1.place(x=195, y=95)
+lbx2.place(x=125, y=115)
+lby2.place(x=195, y=115)
+
+lb_line= Label(mainFrame2, bg=color2, text='Цвет линии (текущий:       ): ')
+lb_lcolor = Label(mainFrame2, bg=linecolor)
+lb_bg = Label(mainFrame2, bg=color2, text='Цвет фона: ')
+lb_line.place(x=15, y=25)
+lb_bg.place(x=15, y=95)
+lb_lcolor.place(x=143, y=28, width=17, height=17)
+
+lb_angle = Label(mainFrame3, bg=color3, text="Шаг угла (в градусах):")
+lb_len = Label(mainFrame4, bg=color4, text="Длина исследуемой линии:")
+lb_angle.place(x=30, y=70)
+lb_len.place(x=20, y=40)
+
+
+fxs = Entry(mainFrame1, bg="white")
+fys = Entry(mainFrame1, bg="white")
+fxf = Entry(mainFrame1, bg="white")
+fyf = Entry(mainFrame1, bg="white")
+fxs.place(x=140, y=96, width=50)
+fys.place(x=210, y=96, width=50)
+fxf.place(x=140, y=116, width=50)
+fyf.place(x=210, y=116, width=50)
+
+fangle = Entry(mainFrame3, bg="white")
+fline = Entry(mainFrame4, bg="white")
+fangle.place(x=205, y=70, width=50)
+fline.place(x=225, y=40, width=50)
+
+
+btn_draw = Button(mainFrame1, text=u"Построить", command=lambda: draw(0))
+btn_draw.place(x=10, y=140, width=280, height=50)
+
+btn_viz = Button(mainFrame3, text=u"Визуальный анализ", command=lambda: draw(1))
+btn_viz.place(x=10, y=100, width=280, height=50)
+
+btn_time = Button(mainFrame4, text=u"Сравнение времени построения", command=lambda: analize(0))
+btn_smoth = Button(mainFrame4, text=u"Сравнение ступенчатости", command=lambda: analize(1))
+btn_time.place(x=10, y=80, width=280, height=50)
+btn_smoth.place(x=10, y=140, width=280, height=50)
+
+btn_clean = Button(mainFrame5, text=u"Очистить экран", command=clean)
+btn_help = Button(mainFrame5, text=u"Справка", command=show_info)
+btn_exit = Button(mainFrame5, text=u"Выход", command=close_all)
+btn_clean.place(x=10, y=20, width=280, height=50)
+btn_help.place(x=10, y=80, width=280, height=50)
+btn_exit.place(x=10, y=140, width=280, height=50)
+
+draw_axis()
+window.mainloop()

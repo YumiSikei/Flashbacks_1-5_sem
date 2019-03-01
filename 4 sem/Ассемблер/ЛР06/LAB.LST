@@ -1,0 +1,100 @@
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 12:11:53
+
+                                                             Page     1-1
+
+
+ 0000				     SSTACK     SEGMENT PARA STACK  'STACK'
+ 0000  0040[			                DB   64 DUP('СТЕК____')
+	   D1 D2 C5 CA 5F	
+	   5F 5F 5F		
+			 ]	
+				
+ 0200				     SSTACK     ENDS
+				
+ 0000				     DSEG          SEGMENT  PARA PUBLIC 'DATA'
+ 0000  0005			     M         dw  5
+ 0002  0000			     fact      dw  ?
+ 0004				     DSEG          ENDS
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 12:11:53
+
+                                                             Page     1-2
+
+
+				PAGE
+ 0000				     CSEG      SEGMENT PARA PUBLIC 'CODE'
+				               ASSUME CS:CSEG,DS:DSEG,SS:SSTACK
+						
+ 0000				p proc near
+					       
+ 0000  83 F9 01			               cmp cx, 1
+ 0003  76 0C				       jna m2
+					       
+ 0005  49				       dec cx
+				
+ 0006  E8 0000 R		               call p
+ 0009  41						   inc cx
+ 000A  8B D9						   mov bx,cx
+ 000C  F7 E3				       mul bx
+ 000E  EB 04 90			               jmp m1
+ 0011				m2:             
+ 0011  B8 0001				       mov ax, 1
+				               
+ 0014				m1:	       
+ 0014  C3			               ret
+ 0015				p endp
+				
+ 0015				     START     PROC FAR
+ 0015  B8 ---- R		               MOV  AX,DSEG ; получаем адресок 
+				секции datasec в ds
+ 0018  8E D8			               MOV  DS,AX
+					       
+ 001A  8B 0E 0000 R			       mov cx, M
+ 001E  E8 0000 R			       call p
+ 0021  A3 0002 R			       mov fact, ax
+ 0024  B4 4C			 	       MOV  AH,4Ch; команда для дос - з
+				авершить программу
+ 0026  CD 21			               INT 21H; передача управления дос
+ 0028				     START     ENDP
+				               
+ 0028				     CSEG      ENDS
+				               END  START
+Microsoft (R) Macro Assembler Version 5.10                  4/4/18 12:11:53
+
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CSEG . . . . . . . . . . . . . .  	0028	PARA	PUBLIC	'CODE'
+DSEG . . . . . . . . . . . . . .  	0004	PARA	PUBLIC	'DATA'
+SSTACK . . . . . . . . . . . . .  	0200	PARA	STACK	'STACK'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+FACT . . . . . . . . . . . . . .  	L WORD	0002	DSEG
+
+M  . . . . . . . . . . . . . . .  	L WORD	0000	DSEG
+M1 . . . . . . . . . . . . . . .  	L NEAR	0014	CSEG
+M2 . . . . . . . . . . . . . . .  	L NEAR	0011	CSEG
+
+P  . . . . . . . . . . . . . . .  	N PROC	0000	CSEG	Length = 0015
+
+START  . . . . . . . . . . . . .  	F PROC	0015	CSEG	Length = 0013
+
+@CPU . . . . . . . . . . . . . .  	TEXT  0101h		
+@FILENAME  . . . . . . . . . . .  	TEXT  lab		
+@VERSION . . . . . . . . . . . .  	TEXT  510		
+
+
+     44 Source  Lines
+     44 Total   Lines
+     21 Symbols
+
+  46688 + 444316 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

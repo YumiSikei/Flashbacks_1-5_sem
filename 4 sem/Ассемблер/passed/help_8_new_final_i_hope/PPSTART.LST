@@ -1,0 +1,124 @@
+Turbo Assembler	 Version 5.3	    05-15-18 21:56:53	    Page 1
+PPSTART.ASM
+
+
+
+      1					 .386
+      2	00000000			 .model	FLAT,PASCAL
+      3					 PUBLIC	START
+      4					 extern	COUNT:near, X_Y:near, SetCler:near, X_U_Y:near
+      5
+      6	00000000			 .DATA
+      7	00000000  00000000 00000000   +	 S	 DD 0,0,0,0
+      8		  00000000 00000000
+      9	00000010  0F0F0F3F 00000055	 S1	 DD 00001111000011110000111100111111B,1010101B
+     10						    ;0-38 - разряды строки
+     11	00000018  3C3C3C3C 00000041	 S2	 DD 00111100001111000011110000111100B,1000001B
+     12						    ;0-38 - разряды строки
+     13	00000020  00000027		 L DD 39    ;= длина строки
+     14					 ; DD он же DWORD - двойное слово, занимает 4 байта
+     15
+     16					 ;Выполнить трассировку, открыв	после первого шага вкладку CPU,
+     17					 ; отображающую	дизассемблированный код, регистры, стек	и память, командой .
+     18					 ; Отладить программу.
+     19					 ;Добавить в проект п\п	COUNT из файла COUNT.ASM:
+     20					 ;•	 составить подпрограмму	COUNT в	файле COUNT.ASM
+     21					 ;•	 получить COUNT. OBJ
+     22					 ;•	 добавить в проект перед begin
+     23					 ;{$L COUNT .OBJ}
+     24					 ;FUNCTION COUNT:LONGWORD ; EXTERNAL;
+     25					 ;а в конце блока ASM END
+     26					 ;   PUSH OFFSET S1
+     27					 ;   PUSH L
+     28					 ;   CALL COUNT
+     29					 ;•	 выполнить отладку функции COUNT
+     30					 ;Подобным образо последовательно добавить в проект и отладить
+     31					 ; подпрограмму	SetCler	из файла SetCler. ASM (два вызова в п\п	START, см ниже)	и	    +
+     32					 подпрограмму X_Y из файла X-Y.	ASM (один вызов	в п\п START).
+     33					 ;Результаты выполнения	подпрограмм проверять средствами отладки Turbo Delphi
+     34
+     35
+     36	00000024			 .CODE
+     37	00000000			 START:
+     38						 ; Согласно соглашению передаем	все аргументы по стеку в прямом	порядке
+     39	00000000  68 00000010r		    PUSH OFFSET	S1
+     40	00000005  FF 35	00000020r	    PUSH L
+     41	0000000B  E8 00000000e		    CALL COUNT
+     42					    ; Разобрано
+     43
+     44					    ; PUSH OFFSET S1
+     45					    ; PUSH L
+     46					    ; PUSH 1
+     47					    ; PUSH 1
+     48					    ; CALL SetCler
+     49					    ; Разобрано
+     50
+     51					    ; PUSH OFFSET S2
+     52					    ; PUSH L
+     53					    ; PUSH 34
+     54					    ; PUSH 0
+     55					    ; CALL SetCler
+     56					    ; Разобрано
+     57
+Turbo Assembler	 Version 5.3	    05-15-18 21:56:53	    Page 2
+PPSTART.ASM
+
+
+
+     58					    ; PUSH OFFSET S1
+     59					    ; PUSH OFFSET S2
+     60					    ; PUSH L
+     61					    ; CALL X_Y
+     62					    ; Разобрано
+     63
+     64					    ; PUSH OFFSET S1
+     65					    ; PUSH OFFSET S2
+     66					    ; PUSH L
+     67					    ; CALL X_U_Y
+     68					    ; Разобрано
+     69
+     70					    ; Согласно соглашению не занимаемся	очисткой памяти
+     71
+     72	00000010  C3			 RET;
+     73					 END
+Turbo Assembler	 Version 5.3	    05-15-18 21:56:53	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "05-15-18"
+??FILENAME			  Text	 "PPSTART "
+??TIME				  Text	 "21:56:53"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 PPSTART
+@INTERFACE			  Text	 004H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+COUNT				  Near32 ----:---- Extern
+L				  Dword	 FLAT:0020
+S				  Dword	 FLAT:0000
+S1				  Dword	 FLAT:0010
+S2				  Dword	 FLAT:0018
+SETCLER				  Near32 ----:---- Extern
+START				  Near32 FLAT:0000
+X_U_Y				  Near32 ----:---- Extern
+X_Y				  Near32 ----:---- Extern
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0024 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  0011 Dword  Public  CODE
+

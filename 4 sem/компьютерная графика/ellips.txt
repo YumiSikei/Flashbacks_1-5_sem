@@ -1,0 +1,18 @@
+﻿# найти точки эллипса
+def oval(x0, y0, a, b):
+    t = 0
+    X = []
+    Y = []
+    while (t <= 2 * pi):
+        x = x0 + a * cos(t);
+        y = y0 + b * sin(t); 
+        t += 0.005
+        X.append(x)
+        Y.append(y)
+    return X, Y
+
+# рисовать по пикселям
+def draw_by_pxl(X, Y):
+    n = len(X)
+    for i in range(n):
+        canv.create_oval([X[i],Y[i]], [X[i] + 1, Y[i] + 1])

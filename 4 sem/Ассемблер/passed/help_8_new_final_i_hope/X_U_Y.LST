@@ -1,0 +1,107 @@
+Turbo Assembler	 Version 5.3	    05-15-18 21:56:53	    Page 1
+X_U_Y.ASM
+
+
+
+      1					 ;Составить подпрограмму с именем X_U_Y	типа
+      2					 ;   Procedure (var X: LONGWORD; const Y:LONGWORD; L:LONGWORD)
+      3					 ;выполн€ющую объединение битовых строк	X:=X U Y длины L.
+      4
+      5					 .386
+      6	00000000			 .model	FLAT,PASCAL
+      7					 PUBLIC	X_U_Y
+      8
+      9	00000000			 .CODE
+     10	00000000			 X_U_Y PROC
+     11
+     12					 ; Тут был нарушен порядок. Как	это вообще работало?
+     13	00000000  55			 PUSH EBP
+     14	00000001  8B EC			 MOV EBP,ESP
+     15
+     16		  = DWORD PTR[EBP+16]	 X EQU DWORD PTR[EBP+16]	   ;первая строка
+     17		  = DWORD PTR[EBP+12]	 Y EQU DWORD PTR[EBP+12]	   ;вторая строка
+     18		  = DWORD PTR[EBP+8]	 L EQU DWORD PTR[EBP+8]		   ;длина строк
+     19
+     20	00000003  56			   PUSH	ESI			   ;сохраняем регистры
+     21	00000004  57			   PUSH	EDI
+     22
+     23	00000005  8B 4D	08		   MOV ECX,L			   ;CX = длина строк
+     24	00000008  C1 E9	05		   SHR ECX,5
+     25					   ; Функции сдвига (сдвиг логический операнда влево/вправо)
+     26					   ; SHL операнд, количество_сдвигов	     SHR операнд, количество_сдвигов
+     27					   ; SHL и SHR сдвигают	биты операнда (регистр/память) влево или вправо
+     28					   ; соответственно на один разряд. Указанное выше действие повторяется
+     29					   ; количество	раз, равное значению второго операнда.
+     30
+     31					   ; Теперь по нашему коду. Сдвигаем на	5 разр€дов вправо.
+     32					   ; Если ECX больше или равен 32, то он станет	1, иначе 0
+     33
+     34	0000000B  41			   INC ECX
+     35					   ; Инкрементируем ECX, чтобы цикл снизу выполнился 1 раз, если меньше	32 бит
+     36					   ; и 2 раза, если битов все таки больше
+     37	0000000C  8B 7D	10		   MOV EDI,X
+     38	0000000F  8B 75	0C		   MOV ESI,Y
+     39					   ; Сразу будем разбирать на примере. Пусть X = 1010, а Y = 1000
+     40
+     41	00000012			 M1:
+     42	00000012  8B 06			   MOV EAX,[ESI]
+     43					   ; Помещаем Y(1000) как результат работы подпрограммы
+     44	00000014  0B 07			   OR EAX, [EDI]
+     45					   ; Логическое	ИЛИ вычисляется	с помощью команды OR. У	этой команды 2
+     46					   ; операнда, и результат помещается на место первого.
+     47					   ; Значит в нашем случае мы получаем X or Y =	1010
+     48	00000016  83 C7	04		   ADD EDI,4
+     49	00000019  83 C6	04		   ADD ESI,4
+     50					   ; Cдвигаем указатели	строк на 4. Мы это уже проделывали в подсчёте. Как я и
+     51					   ; говорил тогда - это сдвиг на 4 байта, 32 бита. Ответ 1010,	что правильно
+     52					   ; Первая итерация
+     53	0000001C  E2 F4			   LOOP	M1
+     54
+     55	0000001E  5F			   POP EDI
+     56	0000001F  5E			   POP ESI
+     57	00000020  5D			   POP EBP
+Turbo Assembler	 Version 5.3	    05-15-18 21:56:53	    Page 2
+X_U_Y.ASM
+
+
+
+     58	00000021  C2 000C		   RET 12
+     59	00000024			 X_U_Y ENDP
+     60					 END
+Turbo Assembler	 Version 5.3	    05-15-18 21:56:53	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "05-15-18"
+??FILENAME			  Text	 "X_U_Y	  "
+??TIME				  Text	 "21:56:53"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 X_U_Y
+@INTERFACE			  Text	 004H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+L				  Text	 DWORD PTR[EBP+8]
+M1				  Near32 FLAT:0012
+X				  Text	 DWORD PTR[EBP+16]
+X_U_Y				  Near32 FLAT:0000
+Y				  Text	 DWORD PTR[EBP+12]
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0000 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  0024 Dword  Public  CODE
+

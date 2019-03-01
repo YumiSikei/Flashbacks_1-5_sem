@@ -1,0 +1,9 @@
+﻿# поворот
+def turn(X, Y, xc, yc, a):
+    a = a / 180 * pi
+    n = len(X)
+    for i in range(n):
+        tx = X[i]
+        X[i] = xc + (X[i] - xc) * cos(a) + (Y[i] - yc) * sin(a)
+        Y[i] = yc - (tx - xc) * sin(a) + (Y[i] - yc) * cos(a)
+    return X, Y

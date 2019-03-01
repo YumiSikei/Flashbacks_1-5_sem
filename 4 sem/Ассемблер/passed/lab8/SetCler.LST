@@ -1,0 +1,88 @@
+Turbo Assembler	 Version 5.3	    04-22-18 23:04:28	    Page 1
+SetCler.ASM
+
+
+
+      1					 ;Составить подпрограмму с именем SetCler типа
+      2					 ;   Procedure (var S:LONGWORD;	L:LONGWORD; N:LONGWORD;	P:LONGWORD)
+      3					 ;выполняющую установку	разряда	N битовой строки S
+      4					 ;в ноль, если P=0, в единицу,если P не	равен 0.
+      5
+      6					 .386
+      7	00000000			 .model	FLAT,PASCAL
+      8					 PUBLIC	SetCler
+      9
+     10	00000000			 .CODE
+     11	00000000			 SetCler PROC
+     12	00000000  55			   PUSH	EBP			 ;пишем	старый адрес EBP
+     13	00000001  8B EC			   MOV EBP,ESP			 ;пишем	в EBP текущее значение ESP
+     14	00000003  56			   PUSH	ESI
+     15
+     16		  = DWORD PTR[EBP+20]	 S EQU DWORD PTR[EBP+20]	 ;наша строка
+     17		  = DWORD PTR[EBP+16]	 L EQU DWORD PTR[EBP+16]	 ;длина	строки
+     18		  = DWORD PTR[EBP+12]	 N EQU DWORD PTR[EBP+12]	 ;номер	разряда
+     19		  = DWORD PTR[EBP+8]	 P EQU DWORD PTR[EBP+8]		 ;параметр
+     20
+     21					   ;MOV	ECX,L
+     22	00000004  8B 75	0C		   MOV ESI,N			 ;в ESI	грузим номер разряда
+     23	00000007  8B 5D	14		   MOV EBX,S			 ;адрес	строки
+     24	0000000A  83 FE	20		   CMP ESI,32
+     25	0000000D  76 0A	90 90 90 90	   JNA M0
+     26
+     27	00000013  83 EE	20		   SUB ESI,32
+     28	00000016  83 C3	04		   ADD EBX,4
+     29
+     30	00000019			 M0:
+     31	00000019  83 7D	08 00		   CMP P,0			 ;сравниваем режим с нулем
+     32	0000001D  74 0C	90 90 90 90	   JE M1			 ;если равно, то переходим на метку M1
+     33	00000023  0F AB	33		   BTS [EBX], ESI		 ;установка бита в 1 (BT + Set bit)
+     34	00000026  EB 06	90 90 90	   JMP M2
+     35	0000002B			 M1:
+     36	0000002B  0F B3	33		   BTR [EBX], ESI		 ;установка бита в 0 (BT + Reset bit)
+     37
+     38	0000002E			 M2:
+     39	0000002E  5E			   POP ESI			 ;восстанавливаем регистры
+     40	0000002F  5D			   POP EBP
+     41	00000030  C2 0010		   RET 16
+     42	00000033			 SetCler ENDP
+     43					 END
+Turbo Assembler	 Version 5.3	    04-22-18 23:04:28	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "04-22-18"
+??FILENAME			  Text	 "SetCler "
+??TIME				  Text	 "23:04:28"
+??VERSION			  Number 0503
+@32BIT				  Text	 1
+@CODE				  Text	 FLAT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 FLAT
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 SETCLER
+@INTERFACE			  Text	 004H
+@MODEL				  Text	 1
+@STACK				  Text	 FLAT
+@WORDSIZE			  Text	 4
+L				  Text	 DWORD PTR[EBP+16]
+M0				  Near32 FLAT:0019
+M1				  Near32 FLAT:002B
+M2				  Near32 FLAT:002E
+N				  Text	 DWORD PTR[EBP+12]
+P				  Text	 DWORD PTR[EBP+8]
+S				  Text	 DWORD PTR[EBP+20]
+SETCLER				  Near32 FLAT:0000
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  _DATA				  32  0000 Dword  Public  DATA
+FLAT				  Group
+_TEXT				  32  0033 Dword  Public  CODE
+

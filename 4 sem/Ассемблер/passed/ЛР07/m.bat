@@ -1,0 +1,11 @@
+MASM /Zi main.asm,,;
+MASM /Zi p0.asm,,;
+MASM /Zi p1.asm,,;
+MASM /Zi p2.asm,,;
+MASM /Zi p3.asm,,;
+MASM /Zi p4.asm,,;
+MASM /Zi p5.asm,,;
+MASM /Zi p6.asm,,;
+MASM /Zi p7.asm,,;
+MASM /Zi p8.asm,,;
+LINK /Co main.obj p0.obj p1.obj p2.obj p3.obj p4.obj p5.obj p6.obj p7.obj p8.obj;

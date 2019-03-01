@@ -1,0 +1,46 @@
+# Функция среза
+def srez(a,i,j,inp=''):
+    s=''
+    t=0
+    while t<i: 
+        s+=a[t]
+        t+=1
+    s+=inp
+    while j<len(a):
+        s+=a[j]
+        j+=1
+    return s
+
+        
+# Функция замены арифм. выражения
+def zamena(s,a):
+    ch='0123456789'
+    i=1
+    while i<len(s)-1:
+        if s[i]==a and s[i-1] in ch and s[i+1] in ch:
+            k1=k2=''
+            
+            # Число слева
+            t=i-1
+            while s[t] in ch:
+                k1+=s[t]
+                t-=1
+            
+            # Реверс
+            k11=''
+            for j in range(len(k1)-1,-1,-1):
+                k11+=k1[j]
+            
+            # Число справа
+            q=i+1
+            while s[q] in ch:
+                k2+=s[q]
+                q+=1
+                
+            # Сама замена   
+            if a=='*':       
+                s=srez(s,t+1,q,str(int(k11)*int(k2)))
+            elif a=='-':
+                s=srez(s,t+1,q,str(int(k11)-int(k2)))        
+        i+=1
+    return s

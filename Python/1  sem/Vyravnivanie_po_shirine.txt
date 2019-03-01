@@ -1,0 +1,21 @@
+
+# Функция, определяющая длину макс. строки
+def max_stroka(a):
+    max_stroka=0
+    for x in a:
+        if len(x)>max_stroka:
+            max_stroka=len(x)
+    return max_stroka
+
+# Выравниваю по ширине
+print('\nСтроки выровнены по ширине:\n')
+for x in A:
+    x=srez(x,len(x)-1,len(x))
+    i=0
+    while len(x)<max_stroka(A):    
+        if x[i]==' ' and x[i-1]!=' ':
+            x=srez(x,i,i+1,'  ')
+        i+=1
+        if i==len(x):
+            i=0
+    print('\t'+x)

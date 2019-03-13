@@ -1,21 +1,39 @@
-import bisect, heapq
+def max_elem(array):
+    m = array[0]
+    for i in range(1, len(array)):
+        if array[i] > m:
+            m = array[i]
+    return m
 
 def patience_sort(seq):
-    piles = []
-    for x in seq:
-        new_pile = [x]
-        i = bisect.bisect_left(piles, new_pile)
-        if i != len(piles):
-            piles[i].insert(0, x)
+    N = len(seq)
+    M = [0] * N
+    for i in range(N):
+        M[i] = [0] * (N + 1)
+    G = max_elem(seq) + 1
+
+    i = j = k = 0
+    
+    M[i][j+1] = A[k]
+    for k in range (1, N):
+        if M[i][j+1] > A[k]:
+            j += 1
+            M[i][j+1] = A[k]
         else:
-            piles.append(new_pile)
-    for i in range(len(seq)):
-        small_pile = piles[0]
-        seq[i] = small_pile.pop(0)
-        if small_pile:
-            heapq.heapreplace(piles, small_pile)
-        else:
-            heapq.heappop(piles)
-    assert not piles
+            M[i][0] = j + 1
+            i += 1
+            j = 0
+            M[i][j+1] = A[k]
+    M[i][0] = j + 1
+
+    for k in range(0, N):
+        min_el = G
+        for j in range(0, j <= i):
+            if M[j][0] != 0:
+                if min_el > M[j][M[j][0]]:
+                    min_el = M[j][M[j][0]]
+                    s = j
+        A[k] = min_el
+        M[s][0] -= 1    
 
     return seq

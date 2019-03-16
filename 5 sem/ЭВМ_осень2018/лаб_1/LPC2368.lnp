@@ -1,0 +1,6 @@
+--cpu ARM7TDMI
+".\main.o"
+--strict --scatter ".\LPC2368.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\LPC2368.map" -o .\LPC2368.axf

@@ -1,0 +1,20 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Даниэлла\Documents\ЭВМ_осень2018\лаб_1\LPC2368.uvproj
+Project File Date:  10/20/2018
+
+<h2>Output:</h2>
+Build target 'Target 1'
+linking...
+.\LPC2368.sct(7): error: L6236E: No section matches selector - no section to be FIRST/LAST.
+".\LPC2368.axf" - 1 Errors, 0 Warning(s).
+Target not created
+Build target 'Target 1'
+compiling main.c...
+linking...
+.\LPC2368.sct(7): error: L6236E: No section matches selector - no section to be FIRST/LAST.
+".\LPC2368.axf" - 1 Errors, 0 Warning(s).
+Target not created

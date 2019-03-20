@@ -1,4 +1,6 @@
 from patience_sort import patience_sort
+from insertion_sort import insertion_sort
+from smoothsort import smoothsort
 
 
 from random import randint
@@ -45,6 +47,30 @@ def sort_test(sort):
         print("-----------")
     print()
 
+#A = [4,7,9,2,6,4,1,8]
+#print('Massiv: ',A,'\n')
+#A_p = [0]*len(A)
+#A_s = [0]*len(A)
+#A_i = [0]*len(A)
+#for i in range (len(A)):
+#    A_p[i] = A[i]
+#    A_s[i] = A[i]
+#    A_i[i] = A[i]
 
+      #working
 print("Терпеливая сортировка:")
 sort_test(patience_sort)
+#A_p = patience_sort(A_p)
+#print(A_p,'\n')
+
+      #working
+#print("Плавная сортировка:")
+#sort_test(smoothsort)
+#A_s = smoothsort(A_s)
+#print(A_s,'\n')
+
+      #working
+#print("Сортировка со вставками:")
+#sort_test(insertion_sort)
+#A_i = insertion_sort(A_i)
+#print(A_i)

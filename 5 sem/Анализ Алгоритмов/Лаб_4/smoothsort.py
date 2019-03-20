@@ -144,3 +144,5 @@ def smoothsort(A):
             p = (p << 1) + 1
             # element q is done
             # element 0 is done
+
+    return A

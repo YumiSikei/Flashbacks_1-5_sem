@@ -41,9 +41,9 @@ def sort_test(sort):
         rlg /= (10**9*n)
         ilg /= (10**9*n)
         dlg /= (10**9*n)
-        print("{0}".format(rlg))
-        print("{0}".format(ilg))
-        print("{0}".format(dlg))
+        print('random      ',"{0}".format(rlg))
+        print('increasing  ',"{0}".format(ilg))
+        print('decreasing  ',"{0}".format(dlg))
         print("-----------")
     print()
 

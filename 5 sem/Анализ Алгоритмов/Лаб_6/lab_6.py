@@ -100,8 +100,18 @@ def snd_conv():
  
     while True:
         time.sleep(10**-5)
+        k = 0
+        m = 0
+
+        mutex1.acquire()
         if len(fst_q)>0:
+            k = 1
             if fst_q[0] == -1:
+                m = 1
+        mutex1.release()
+        
+        if k == 1:
+            if m == 1:
                 mutex2.acquire()
                 snd_q.append(-1)
                 mutex2.release()
@@ -132,9 +142,18 @@ def trd_conv():
     j = 0
     while True:
         time.sleep(10**-5)
+
+        k = 0
+
+        mutex2.acquire()
         if len(snd_q)>0:
+            k = 1
             if snd_q[0] == -1:
+                mutex2.release()
                 return
+        mutex2.release()
+
+        if k == 1:
             tmp = 0
  
             mutex2.acquire()
@@ -150,7 +169,7 @@ def trd_conv():
             log3.append([time.perf_counter()-tb,'{} объект помещен в очередь четвертого конвеера'.format(j+1)])
             j+=1
  
-n = 100
+n = 30
 tb = time.perf_counter()
 log1 = []
 log2 = []

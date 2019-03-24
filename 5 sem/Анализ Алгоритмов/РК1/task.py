@@ -2,8 +2,92 @@ import copy
 from random import randint
 from math import factorial
 
-from graph_stepen_2 import prov_st_2, generation_stepen_two 
-from graph_dvudolnii import prov_dv, generation_dvudolnii 
+from random import randint
+from math import factorial
+
+def prov(mas, v1, v2):
+    for i in range (len(mas)):
+        if (mas[i][0] == v1 and mas[i][1] == v2) or (mas[i][1] == v1 and mas[i][0] == v2):
+            return 0
+    return 1
+
+def generation_dvudolnii():
+
+    dvudol = [0]* randint(2, 10) #массив для обозначения части вершин
+
+    #ищем первые элементы в каждую группу
+    n1 = randint(0, len(dvudol) - 1)
+    dvudol[n1] = 1
+    n2 = randint(0, len(dvudol) - 1)
+    while n2 == n1:
+        n2 = randint(0, len(dvudol) - 1)
+    dvudol[n2] = 2
+
+    n_1 = 0
+    for i in range (len(dvudol)):
+        if dvudol[i] == 0:
+            dvudol[i] = randint(1,2)
+        if dvudol[i] == 1:
+            n_1 += 1
+    n_2 = len(dvudol) - n_1
+
+    dvudolnii = [0] * len(dvudol)
+    dugs = randint(0, n_1 * n_2)
+    if dugs > 0:
+        dvudol_dugs = [0] * dugs
+        for i in range (dugs):
+            dvudol_dugs[i] = [0] * 2
+    else:
+        dvudol_dugs = []
+
+    for i in range(dugs):
+        v1 = randint(0, len(dvudolnii) - 1)
+        while (dvudol[v1] == 1 and dvudolnii[v1] == n_2) or (dvudol[v1] == 2 and dvudolnii[v1] == n_1):
+            v1 = randint(0, len(dvudolnii) - 1)
+            
+        v2 = randint(0, len(dvudolnii) - 1)
+        while dvudol[v2] == dvudol[v1] or prov(dvudol_dugs, v1, v2) == 0:
+            v2 = randint(0, len(dvudolnii) - 1)
+
+        dvudol_dugs[i][0] = v1
+        dvudol_dugs[i][1] = v2
+        dvudolnii[v1] += 1
+        dvudolnii[v2] += 1
+    
+
+    return dvudol, dvudolnii, dvudol_dugs, dugs
+
+
+def generation_stepen_two():
+
+    stepen_2 = [0]* randint(3, 7)
+    dugs = randint(0, len(stepen_2) - 1) #количество дуг
+    if dugs > 0:
+        stepen_2_dugs = [0]
+        stepen_2_dugs[0] = [0] * 2
+    else:
+        stepen_2_dugs = []
+
+    for i in range (dugs):
+        v1 = randint(0, len(stepen_2) - 1)
+        while stepen_2[v1] == 2:
+            v1 = randint (0, len(stepen_2) - 1)
+            
+        v2 = randint(0, len(stepen_2) - 1)
+        while v2 == v1 or stepen_2[v2] == 2 or prov(stepen_2_dugs, v1, v2) == 0:
+            v2 = randint(0, len(stepen_2) - 1)
+
+        if i > 0:
+            stepen_2_dugs.append(0)
+            stepen_2_dugs[i] = [0] * 2
+        stepen_2_dugs[i][0] = v1
+        stepen_2_dugs[i][1] = v2
+        stepen_2[v1] += 1
+        stepen_2[v2] += 1
+
+    return stepen_2,stepen_2_dugs, dugs
+
+
 
 
 
@@ -49,22 +133,54 @@ def extend(candidates, not_, dugs):
                 not_ = extend(candidates, not_, dugs)
                 return not_
 
+def proverochka(dugs, not_, a): #проверка, есть у кандидата дуга с первой вершиной
 
+    for i in range(len(dugs)):
+        if dugs[i][0] == a or dugs[i][1] == a:
+            if dugs[i][0] == not_[0] or dugs[i][1] == not_[0]:
+                return 0
+    return 1
 
-def task_step_2(A, dugs):
-    print('\n\nGraph  Stepen 2','  ',A)
-    print('Dugs: ')
+def is_it_here(candidates, a):
+    for i in range (len(candidates)):
+        if candidates[i] == a:
+            return 1
+    return 0
+
+def prov_candidates(not_, candidates, dugs):
     for i in range (len(dugs)):
-        print(dugs[i])
+        #print('  dug ', dugs[i])
+        if dugs[i][0] != not_[0] and dugs[i][1] != not_[0]:
+            if proverochka(dugs, not_, dugs[i][0]) == 1:
+                h = is_it_here(candidates, dugs[i][0])
+                if h == 0:
+                    candidates.append(dugs[i][0])
+            elif proverochka(dugs, not_, dugs[i][1]) == 1:
+                h = is_it_here(candidates, dugs[i][1])
+                if h == 0:
+                    candidates.append(dugs[i][1])
+        #print('      ', candidates)
+    return candidates
+
+
+def task(A, dugs, name_graph):
+    print('\n\nGraph  ', name_graph,'  ',A)
+    if len(dugs) > 0:
+        print('Dugs: ')
+        for i in range (len(dugs)):
+            print(dugs[i])
+    else:
+        print('no dugs')
     
     combsub = [0]   #независимое множество
-    not_ = [0]  #вершины, добваленные в текущий варинт нез. множества
+
     empty = []  #вершины без дуг
     k = 0
     n = 0
     for i in range(len(A)):
         if A[i] == 0:
             empty.append(i)
+    #print('\n\nEmpty   ', empty)
             
     max_combsub = []  #максимальное независимое множество
             
@@ -72,61 +188,72 @@ def task_step_2(A, dugs):
         max_combsub = empty
     else:
         for i in range(len(A) - 1):
+            #print('\n   ', i, ' try')
+
+            not_ = [0]  #вершины, добавленные в текущий варинт нез. множества
+            
             #берем первую вершину с дугой(ами), которая может быть в множестве
             if A[i] > 0:
                 not_[0] = i
+                #print('not ', not_)
+            else:
+                continue
             candidates = []    #кандидаты в независимое множество
 
             #находим кандидатов-вершин в множество, которые не имеют дуг с первой вершиной
-            for k in range(len(dugs)):
-                if (dugs[k][0] != not_[0]) and (dugs[k][1] != not_[0]):
-                    #смотрим, не добавили ли какую-либо вершину из дуги уже
-                    if len(candidates) > 0:
-                        can = 0
-                        for j in range (len(candidates)):
-                            if candidates[j] == dugs[k][0]:
-                                can = 1 
-                        if can == 0:
-                            candidates.append(dugs[k][0])
-                        else:
-                            can = 0
-                            for j in range (len(candidates)):
-                                if candidates[j] == dugs[k][1]:
-                                    can = 1
-                            if can == 0:
-                                candidates.append(dugs[k][1])
-                                
-                    else:
-                        candidates.append(dugs[k][0])
-
+            candidates = prov_candidates(not_, candidates, dugs)
+            #print('candidates ', candidates)
+                        
             #вызываем рекурсивную функцию, которая будет пополнять текущий вариант независимого множества
             combsub = extend(candidates, not_, dugs)
+            print('combsub ', combsub)
 
             if i == 0 or len(max_combsub) < len(combsub):
                 max_combsub = copy.copy(combsub)
 
-    for i in range(len(empty)):
-        max_combsub.append(empty[i])
-    print('\nMax combination :', max_combsub)
+        for i in range(len(empty)):
+            max_combsub.append(empty[i])
+            
+    if len(max_combsub) == 0:
+        print('\nCombination is none')
+    else:
+        print('\nMax combination :', max_combsub)
 
 
-task_dvudol(group, A, dugs):
+def task_dvudol(group, A, dugs):
     print('\n\nGraph  Dvudolnii','  ',A)
+    print('Group: ', group)
     print('Dugs: ')
+    for i in range (len(dugs)):
+        print(dugs[i])
+        
     n_1 = 0
     n_2 = 0
-    for i in range (group):
-        if group[i] = 1:
+    for i in range (len(group)):
+        if group[i] == 1:
             n_1 += 1
         else:
             n_2 += 1
     n_max = max(n_1, n_2)
     
+    if n_max  == n_1:
+        num = 1
+    else:
+        num = 2
 
+    max_combsub = []
+    for i in range(len(A)):
+        if num == group[i]:
+            max_combsub.append(i)
+        else:
+            if A[i] == 0:
+                max_combsub.append(i)
+            
+    print('\nMax combination :', max_combsub)
 
 Dvudol_group, dvudol, dvudol_dugs, dvudol__n_dugs = generation_dvudolnii()
 Stepen_2, stepen_2_dugs, stepen_2__n_dugs = generation_stepen_two()
 
 
-task(Dvudol_group, dvudol, dvudol_dugs)
-task(Stepen_2, stepen_2_dugs)
+task(dvudol, dvudol_dugs, 'Dvudolnii')
+task(Stepen_2, stepen_2_dugs, 'Stepen_2')

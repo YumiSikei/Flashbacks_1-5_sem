@@ -33,8 +33,4 @@ def generation_stepen_two():
 
     return stepen_2,stepen_2_dugs, dugs
 
-A, A_dugs, dugs = generation_stepen_two()
-print('Graph stepen 2 ',A)
-print('Dugs   ', dugs)
-for i in range(len(A_dugs)):
-    print(A_dugs[i])
+Stepen_2, stepen_2_dugs, stepen_2__n_dugs = generation_stepen_two()

@@ -47,9 +47,4 @@ def generation_dvudolnii():
 
     return dvudol, dvudolnii, dvudol_dugs, dugs
 
-A_group, A, A_dugs, dugs = generation_dvudolnii()
-print('Graph Dvudolnii',A)
-print('Groups ', A_group)
-print('Dugs   ', dugs)
-for i in range(len(A_dugs)):
-    print(A_dugs[i])
+Dvudol_group, dvudol, dvudol_dugs, dvudol__n_dugs = generation_dvudolnii()

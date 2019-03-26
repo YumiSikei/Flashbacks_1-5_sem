@@ -169,7 +169,7 @@ def trd_conv():
             log3.append([time.perf_counter()-tb,'{} объект помещен в очередь четвертого конвеера'.format(j+1)])
             j+=1
  
-n = 30
+n = 5
 tb = time.perf_counter()
 log1 = []
 log2 = []

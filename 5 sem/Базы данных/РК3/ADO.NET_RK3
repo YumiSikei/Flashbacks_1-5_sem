@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
+using System.Reflection;
+
+namespace RK_3
+{
+    class C_RK_3
+    {
+        private static string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog= TEST; Integrated Security=True";
+
+
+       
+        public void ADO2()
+        {
+            const string queryString = @"SELECT RK_3.Felials.Company FROM RK_3.Felials JOIN RK.Workers ON RK.Felials.ID = RK.Workers.Felial_id WHERE (SELECT Count(id), Felial_id FROM RK.Workers WHERE YEAR(Birthday) = 1993 GROUP BY Felial_id) AS Counter >= 6 AND Counter <= 15";
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            SqlCommand command = new SqlCommand(queryString, connection);
+
+            SqlDataReader dataReader = command.ExecuteReader();
+            while (dataReader.Read())
+                Console.WriteLine(dataReader[0].ToString());
+
+            dataReader.Close();
+            connection.Close();
+        }
+
+       
+
+
+        public C_RK_3() {
+            ADO2();
+        }
+    }
+}

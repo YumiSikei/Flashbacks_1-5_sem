@@ -1,0 +1,11 @@
+J:\SPDF\Bauman\DataBases\lab4\ClassLibrary1\ClassLibrary1\obj\Release\ClassLibrary1.csprojResolveAssemblyReference.cache
+J:\SPDF\Bauman\DataBases\lab4\ClassLibrary1\ClassLibrary1\bin\Release\ClassLibrary1.dll
+J:\SPDF\Bauman\DataBases\lab4\ClassLibrary1\ClassLibrary1\bin\Release\ClassLibrary1.pdb
+J:\SPDF\Bauman\DataBases\lab4\ClassLibrary1\ClassLibrary1\obj\Release\ClassLibrary1.dll
+J:\SPDF\Bauman\DataBases\lab4\ClassLibrary1\ClassLibrary1\obj\Release\ClassLibrary1.pdb
+C:\Users\Даниэлла\Documents\DataBase\lab_4\ClassLibrary1\ClassLibrary1\bin\Release\ClassLibrary1.dll
+C:\Users\Даниэлла\Documents\DataBase\lab_4\ClassLibrary1\ClassLibrary1\bin\Release\ClassLibrary1.pdb
+C:\Users\Даниэлла\Documents\DataBase\lab_4\ClassLibrary1\ClassLibrary1\obj\Release\ClassLibrary1.csprojAssemblyReference.cache
+C:\Users\Даниэлла\Documents\DataBase\lab_4\ClassLibrary1\ClassLibrary1\obj\Release\ClassLibrary1.csproj.CoreCompileInputs.cache
+C:\Users\Даниэлла\Documents\DataBase\lab_4\ClassLibrary1\ClassLibrary1\obj\Release\ClassLibrary1.dll
+C:\Users\Даниэлла\Documents\DataBase\lab_4\ClassLibrary1\ClassLibrary1\obj\Release\ClassLibrary1.pdb
